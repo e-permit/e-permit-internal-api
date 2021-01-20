@@ -1,0 +1,52 @@
+package permit.entities;
+
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+public class Credential {
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @Column(name = "hash", nullable = false)
+    private String hash;
+
+    @Column(name = "jws", nullable = false)
+    private String jws;
+
+    @Column(name = "pid", nullable = false)
+    private int pid;
+
+    @Column(name = "pt", nullable = false)
+    private int pt;
+
+    @Column(name = "py", nullable = false)
+    private int py;
+
+    @Column(name = "iat", nullable = false)
+    private long iat;
+
+    @Column(name = "exp", nullable = false)
+    private long exp;
+
+    @Column(name = "sub", nullable = false)
+    private String sub;
+
+    @Column(name = "cid", nullable = false)
+    private String cid;
+
+    @Column(name = "claims", nullable = false)
+    private String claims;
+
+    @Column(name = "created_at", nullable = false)
+    private Date createdAt;
+
+    @Column(name = "is_verified", nullable = false)
+    private boolean isVerified;
+
+    @Column(name = "is_verification_delivered", nullable = false)
+    private boolean isVerificationDelivered;
+}
