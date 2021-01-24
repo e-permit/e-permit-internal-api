@@ -1,4 +1,4 @@
-package permit.entities;
+package epermit.data.entities;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,6 +34,9 @@ public class Authority {
   @Column(name = "permit_uri", nullable = false)
   private String permitUri;
 
+  @Column(name = "claims_rule", nullable = false)
+  private String claimsRule;
+
   @Column(name = "is_active", nullable = false)
   private Boolean isActive;
 
@@ -48,6 +51,16 @@ public class Authority {
   public void addKey(AuthorityKey key) {
     keys.add(key);
     key.setAuthority(this);
+  }
+
+  @OneToMany(cascade = CascadeType.ALL)
+  @EqualsAndHashCode.Exclude
+  private List<AuthorityQuota> quotas = new ArrayList<>();
+
+  @JsonIgnore
+  public void addQuota(AuthorityQuota quota) {
+    quotas.add(quota);
+    quota.setAuthority(this);
   }
  
 }

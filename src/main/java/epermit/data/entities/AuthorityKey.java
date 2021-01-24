@@ -1,4 +1,4 @@
-package permit.entities;
+package epermit.data.entities;
 
 import java.util.Date;
 

@@ -1,4 +1,4 @@
-package permit.entities;
+package epermit.data.entities;
 
 import java.util.Date;
 
@@ -12,10 +12,13 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
-public class AuthorityProtocol {
+public class AuthorityQuota {
     @Id
     @GeneratedValue
     private Long id;
+
+    @Column(name = "year", nullable = false)
+    private int year;
 
     @Column(name = "permit_type", nullable = false)
     private int permitType;

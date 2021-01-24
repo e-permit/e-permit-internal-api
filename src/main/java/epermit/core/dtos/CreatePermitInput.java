@@ -1,4 +1,4 @@
-package permit.dtos;
+package epermit.dtos;
 
 import lombok.Data;
 
@@ -10,5 +10,4 @@ public class CreatePermitInput {
     private String pt;
     private String pid;
     private String py;
-    private int prid;
 }

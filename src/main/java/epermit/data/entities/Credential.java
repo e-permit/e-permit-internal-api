@@ -1,17 +1,18 @@
-package permit.entities;
+package epermit.data.entities;
 
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-public class IssuedCredential {
+
+public class Credential {
     @Id
     @GeneratedValue
     private Long id;
 
-    @Column(name = "hash", nullable = false)
-    private String hash;
+    @Column(name = "qrcode", nullable = false)
+    private String qrcode;
 
     @Column(name = "jws", nullable = false)
     private String jws;
@@ -40,15 +41,12 @@ public class IssuedCredential {
     @Column(name = "claims", nullable = false)
     private String claims;
 
-    @Column(name = "is_delivered", nullable = false)
-    private boolean isDelivered;
+    @Column(name = "created_at", nullable = false)
+    private Date createdAt;
 
-    @Column(name = "delivered_at", nullable = true)
-    private Date deliveredAt;
+    @Column(name = "is_used", nullable = false)
+    private boolean isUsed;
 
-    @Column(name = "is_verified", nullable = false)
-    private boolean isVerified;
-
-    @Column(name = "verified_at", nullable = true)
-    private Date verifiedAt;
+    @Column(name = "is_usage_delivered", nullable = false)
+    private boolean isUsageDelivered;
 }

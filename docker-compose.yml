@@ -1,0 +1,22 @@
+version: '3.6'
+services:
+  epermit:
+    depends_on:
+      - epermittrdb
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://epermitdb:5432/compose-postgres
+      - SPRING_DATASOURCE_USERNAME=compose-postgres
+      - SPRING_DATASOURCE_PASSWORD=compose-postgres
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    build: 
+      context: .
+    ports:
+      - "3010:8080"
+
+  epermitdb:
+    image: 'postgres:13.1-alpine'
+    container_name: epermitdb
+    environment:
+      - POSTGRES_USER=compose-postgres
+      - POSTGRES_PASSWORD=compose-postgres

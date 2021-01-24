@@ -1,19 +1,28 @@
-package permit.entities;
+package epermit.data.entities;
 
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
-public class Credential {
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
+@Entity
+@Table(name = "issued_credentials")
+@SQLDelete(sql = "UPDATE issued_credentials SET deleted = true WHERE id = ?")
+@Where(clause = "is_deleted = false")
+public class IssuedCredential {
     @Id
     @GeneratedValue
     private Long id;
 
-    @Column(name = "hash", nullable = false)
-    private String hash;
-
+    @Column(name = "qrcode", nullable = false)
+    private String qrcode;
+    
     @Column(name = "jws", nullable = false)
     private String jws;
 
@@ -41,12 +50,15 @@ public class Credential {
     @Column(name = "claims", nullable = false)
     private String claims;
 
-    @Column(name = "created_at", nullable = false)
-    private Date createdAt;
+    @Column(name = "is_used", nullable = false)
+    private boolean isUsed;
 
-    @Column(name = "is_verified", nullable = false)
-    private boolean isVerified;
+    @Column(name = "used_at", nullable = true)
+    private Date usedAt;
 
-    @Column(name = "is_verification_delivered", nullable = false)
-    private boolean isVerificationDelivered;
+    @Column(name = "is_revoked", nullable = false)
+    private boolean isRevoked;
+
+    @Column(name = "revoked_at", nullable = true)
+    private Date revokedAt;
 }
