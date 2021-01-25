@@ -1,4 +1,4 @@
-package epermit.utils;
+package epermit.data.services;
 
 import java.io.FileInputStream;
 import java.security.KeyStore;
@@ -8,12 +8,13 @@ import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.jwk.JWKSet;
 import org.springframework.beans.factory.annotation.Value;
 
-public class KeyUtils {
-    @Value("")
-    private String password;
+public class KeyServiceImpl implements epermit.core.keys.KeyService {
 
     @Value("")
     private String jksFile;
+
+    @Value("")
+    private String password;
 
     public ECKey getCurrentKey() throws Exception {
         KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
@@ -26,7 +27,7 @@ public class KeyUtils {
                 lastKID = kid;
             }
         }
-        return ECKey.load(keyStore, Long.toString(lastKID) , password.toCharArray());
+        return ECKey.load(keyStore, Long.toString(lastKID), password.toCharArray());
     }
 
     public JWKSet getJwkSet() throws Exception {
@@ -35,5 +36,4 @@ public class KeyUtils {
         JWKSet jwkSet = JWKSet.load(keyStore, null);
         return jwkSet;
     }
-
 }

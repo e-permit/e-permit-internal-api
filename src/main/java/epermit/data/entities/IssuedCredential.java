@@ -11,6 +11,11 @@ import javax.persistence.Table;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor // JPA
 @Entity
 @Table(name = "issued_credentials")
 @SQLDelete(sql = "UPDATE issued_credentials SET deleted = true WHERE id = ?")

@@ -14,7 +14,7 @@ import com.nimbusds.jwt.SignedJWT;
 
 import org.junit.jupiter.api.Test;
 
-import epermit.dtos.ApiClientValidationResult;
+import epermit.utils.*;
 import epermit.utils.TokenUtils;
 
 class TokenUtilsTest {

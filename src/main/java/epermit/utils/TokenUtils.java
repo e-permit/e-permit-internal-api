@@ -9,27 +9,24 @@ import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 
-import epermit.dtos.CreatePermitInput;
 
-public class CredentialUtils {
+public class TokenUtils {
     private ECKey ecKey;
 
     private String issuer;
 
-    public CredentialUtils(ECKey ecKey, String issuer) {
+    public TokenUtils(ECKey ecKey, String issuer) {
         this.ecKey = ecKey;
         this.issuer = issuer;
     }
 
-    public String createJws(CreatePermitInput input) throws Exception {
+    public String createToken(ApiClientValidationResult r) throws Exception {
         JWSSigner signer = new ECDSASigner(ecKey);
         Date iat = new Date();
-        Date exp = new Date(new Date().getTime() + 60 * 60 * 1000);
-        JWTClaimsSet.Builder claimsSet = new JWTClaimsSet.Builder().subject(input.getSub()).issuer(issuer)
-                .expirationTime(exp).issueTime(iat).audience(input.getAud());
-        claimsSet.claim("pid", input.getPid());
-        claimsSet.claim("py", input.getPy());
-        claimsSet.claim("pt", input.getPt());
+        Date exp = new Date(new Date().getTime() + r.getExpiration() * 1000);
+        JWTClaimsSet.Builder claimsSet = new JWTClaimsSet.Builder().subject(r.getClientId()).issuer(issuer)
+                .expirationTime(exp).issueTime(iat).audience(issuer);
+        claimsSet.claim("scope", r.getScope());
         JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.ES256).keyID(ecKey.getKeyID()).build();
         SignedJWT signedJWT = new SignedJWT(header, claimsSet.build());
         signedJWT.sign(signer);

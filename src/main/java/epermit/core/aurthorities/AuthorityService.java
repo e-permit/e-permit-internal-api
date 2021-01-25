@@ -1,6 +1,9 @@
-package epermit.core.stores;
+package epermit.core.aurthorities;
 
-public interface AuthorityStore {
+import java.util.List;
+
+public interface AuthorityService {
+    List<Authority> getAll();
     // getAll()
     // getByCode
     // post

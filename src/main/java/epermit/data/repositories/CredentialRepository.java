@@ -2,10 +2,10 @@ package epermit.data.repositories;
 
 
 import org.springframework.stereotype.Repository;
-import epermit.data.entities.Authority;
+import epermit.data.entities.Credential;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 @Repository
-public interface AuthorityRepository extends JpaRepository<Authority, Long> {
-    Authority findByCode(String code);
+public interface CredentialRepository extends JpaRepository<Credential, Long> {
+    
 }

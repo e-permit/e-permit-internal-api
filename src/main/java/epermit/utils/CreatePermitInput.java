@@ -1,4 +1,4 @@
-package epermit.dtos;
+package epermit.utils;
 
 import lombok.Data;
 

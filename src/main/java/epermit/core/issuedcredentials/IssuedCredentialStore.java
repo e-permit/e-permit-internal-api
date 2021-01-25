@@ -1,11 +1,11 @@
-package epermit.services;
+package epermit.core.issuedcredentials;
 
-
-public interface CredentialService {
+public interface IssuedCredentialStore {
     // getAll(paging)
     // getByQrCode()
     // getByQrId()
     // getByQrSerialNumber()
     // create
+    // revoke
     // used
 }
