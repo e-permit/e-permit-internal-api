@@ -1,4 +1,4 @@
-package epermit.unittests;
+package epermit.unittests.utils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -16,10 +16,12 @@ import org.junit.jupiter.api.Test;
 
 import epermit.utils.*;
 import epermit.utils.TokenUtils;
+import lombok.SneakyThrows;
 
 class TokenUtilsTest {
     @Test
-    void TokenShouldBeCreated() throws Exception {
+    @SneakyThrows
+    void TokenShouldBeCreated() {
         ECKey ecJWK = new ECKeyGenerator(Curve.P_256).keyID("1").generate();
         TokenUtils utils = new TokenUtils(ecJWK, "tr");
         ApiClientValidationResult client = new ApiClientValidationResult();

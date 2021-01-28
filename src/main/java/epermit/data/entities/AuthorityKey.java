@@ -26,18 +26,18 @@ public class AuthorityKey {
     private Long id;
 
     @Column(name = "kid", nullable = false)
-    private int kid;
-
-    @Column(name = "is_active", nullable = false)
-    private Boolean isActive;
+    private String kid;
     
     @Column(name = "created_at", nullable = false)
     private Date createdAt;
 
+    @Column(name = "disabled", nullable = true)
+    private Boolean disabled;
+
     @Column(name = "disabled_at", nullable = true)
     private Date disabledAt;
 
-    @Column(name = "content", nullable = false)
+    @Column(name = "content", nullable = false, length=5000)
     private String content;
     
     @ManyToOne

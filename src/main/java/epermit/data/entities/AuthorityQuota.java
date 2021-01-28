@@ -38,12 +38,12 @@ public class AuthorityQuota {
 
     @Column(name = "end_id", nullable = false)
     private int endId;
-
-    @Column(name = "is_active", nullable = false)
-    private Boolean isActive;
     
     @Column(name = "created_at", nullable = false)
     private Date createdAt;
+
+    @Column(name = "disabled", nullable = true)
+    private Boolean disabled;
 
     @Column(name = "disabled_at", nullable = true)
     private Date disabledAt;

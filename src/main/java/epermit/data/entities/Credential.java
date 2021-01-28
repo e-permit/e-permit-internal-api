@@ -20,10 +20,13 @@ public class Credential {
     @GeneratedValue
     private Long id;
 
-    @Column(name = "qrcode", nullable = false)
+    @Column(name = "serial_number", nullable = false)
+    private String serialNumber;
+
+    @Column(name = "qrcode", nullable = false, length=1000)
     private String qrcode;
 
-    @Column(name = "jws", nullable = false)
+    @Column(name = "jws", nullable = false, length=5000)
     private String jws;
 
     @Column(name = "pid", nullable = false)
@@ -47,7 +50,7 @@ public class Credential {
     @Column(name = "cid", nullable = false)
     private String cid;
 
-    @Column(name = "claims", nullable = false)
+    @Column(name = "claims", nullable = false, length=1000)
     private String claims;
 
     @Column(name = "created_at", nullable = false)

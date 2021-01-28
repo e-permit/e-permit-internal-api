@@ -1,10 +1,11 @@
 package epermit.core.keys;
 
 import com.nimbusds.jose.jwk.ECKey;
-import com.nimbusds.jose.jwk.JWKSet;
+
+import org.springframework.data.util.Pair;
 
 public interface KeyService {
-    ECKey getCurrentKey()  throws Exception;
-
-    JWKSet getJwkSet() throws Exception;
+    ECKey getCurrentKey();
+    Pair<String, String> CreateKey(String kid);
+    void EnableKey(String kid); 
 }

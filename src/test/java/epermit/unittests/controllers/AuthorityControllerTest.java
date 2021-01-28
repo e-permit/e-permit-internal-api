@@ -1,4 +1,4 @@
-package epermit.unittests;
+package epermit.unittests.controllers;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertEquals;
@@ -55,7 +55,7 @@ public class AuthorityControllerTest {
 	public void greetingShouldReturnMessageFromService() throws Exception {
 		List<Authority> authorities = new ArrayList<>();
 		Authority a = new Authority();
-		a.setId((long)12);
+		a.setId((long) 12);
 		authorities.add(a);
 		when(service.getAll()).thenReturn(authorities);
 		MvcResult mvcResult = this.mockMvc.perform(get("/authorities")).andDo(print()).andExpect(status().isOk())

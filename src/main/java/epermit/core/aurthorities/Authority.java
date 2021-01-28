@@ -10,7 +10,7 @@ import lombok.Data;
 public class Authority {
   private Long id;
 
-  private int code;
+  private String code;
 
   private String name;
 

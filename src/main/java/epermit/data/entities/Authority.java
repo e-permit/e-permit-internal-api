@@ -26,7 +26,7 @@ public class Authority {
   private Long id;
 
   @Column(name = "code", nullable = false)
-  private int code;
+  private String code;
 
   @Column(name = "name", nullable = false)
   private String name;
@@ -34,11 +34,8 @@ public class Authority {
   @Column(name = "permit_uri", nullable = false)
   private String permitUri;
 
-  @Column(name = "claims_rule", nullable = false)
+  @Column(name = "claims_rule", nullable = true, length=1000)
   private String claimsRule;
-
-  @Column(name = "is_active", nullable = false)
-  private Boolean isActive;
 
   @Column(name = "created_at", nullable = true)
   private Date createdAt;

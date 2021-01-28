@@ -19,16 +19,19 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "issued_credentials")
 @SQLDelete(sql = "UPDATE issued_credentials SET deleted = true WHERE id = ?")
-@Where(clause = "is_deleted = false")
+@Where(clause = "deleted = false")
 public class IssuedCredential {
     @Id
     @GeneratedValue
     private Long id;
 
-    @Column(name = "qrcode", nullable = false)
+    @Column(name = "serial_number", nullable = false)
+    private String serialNumber;
+
+    @Column(name = "qrcode", nullable = false, length=1000)
     private String qrcode;
     
-    @Column(name = "jws", nullable = false)
+    @Column(name = "jws", nullable = false, length=5000)
     private String jws;
 
     @Column(name = "pid", nullable = false)
@@ -52,7 +55,7 @@ public class IssuedCredential {
     @Column(name = "cid", nullable = false)
     private String cid;
 
-    @Column(name = "claims", nullable = false)
+    @Column(name = "claims", nullable = false, length=1000)
     private String claims;
 
     @Column(name = "is_used", nullable = false)
@@ -61,8 +64,8 @@ public class IssuedCredential {
     @Column(name = "used_at", nullable = true)
     private Date usedAt;
 
-    @Column(name = "is_revoked", nullable = false)
-    private boolean isRevoked;
+    @Column(name = "revoked", nullable = false)
+    private boolean revoked;
 
     @Column(name = "revoked_at", nullable = true)
     private Date revokedAt;
