@@ -69,4 +69,7 @@ public class IssuedCredential {
 
     @Column(name = "revoked_at", nullable = true)
     private Date revokedAt;
+
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted;
 }

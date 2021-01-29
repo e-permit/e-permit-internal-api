@@ -15,6 +15,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import epermit.data.entities.Key;
 import epermit.data.repositories.KeyRepository;
 import epermit.data.services.KeyServiceImpl;
+import epermit.integrationtests.common.CustomPostgresContainer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

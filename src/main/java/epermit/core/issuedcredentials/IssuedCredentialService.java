@@ -5,10 +5,10 @@ import org.springframework.data.domain.Pageable;
 
 public interface IssuedCredentialService {
     Page<IssuedCredential> getAll(Pageable pageable);
-    IssuedCredential getById();
-    IssuedCredential getByQrCode();
-    IssuedCredential getBySerialNumber();
-    IssuedCredential create();
+    IssuedCredential getById(long id);
+    IssuedCredential getByQrCode(String qrCode);
+    IssuedCredential getBySerialNumber(String serialNumber);
+    CreateResult create(CreateInput input);
     IssuedCredential revoke();
     IssuedCredential setUsed();
 }

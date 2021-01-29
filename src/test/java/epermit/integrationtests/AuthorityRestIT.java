@@ -26,6 +26,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import epermit.data.entities.Authority;
 import epermit.data.repositories.AuthorityRepository;
+import epermit.integrationtests.common.CustomPostgresContainer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

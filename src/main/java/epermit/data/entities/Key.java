@@ -18,8 +18,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor // JPA
 @Entity
 @Table(name = "keys")
-@SQLDelete(sql = "UPDATE keys SET deleted = true WHERE id = ?")
-@Where(clause = "deleted = false")
+//@SQLDelete(sql = "UPDATE keys SET deleted = true WHERE id = ?")
+//@Where(clause = "deleted = false")
 public class Key {
     @Id
     @GeneratedValue

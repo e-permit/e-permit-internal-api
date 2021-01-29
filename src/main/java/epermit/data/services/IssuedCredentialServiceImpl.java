@@ -1,24 +1,22 @@
 package epermit.data.services;
 
-import java.util.stream.Collectors;
-
-import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Component;
 
-import epermit.core.issuedcredentials.IssuedCredential;
-import epermit.core.issuedcredentials.IssuedCredentialService;
+import epermit.core.issuedcredentials.*;
 import epermit.data.repositories.IssuedCredentialRepository;
 import lombok.SneakyThrows;
 
+@Component
 public class IssuedCredentialServiceImpl implements IssuedCredentialService {
 
     private final IssuedCredentialRepository repository;
     private final ModelMapper modelMapper;
 
-    public IssuedCredentialServiceImpl(IssuedCredentialRepository repository, ModelMapper modelMapper) {
+    public IssuedCredentialServiceImpl(IssuedCredentialRepository repository,
+            ModelMapper modelMapper) {
         this.repository = repository;
         this.modelMapper = modelMapper;
     }
@@ -27,32 +25,38 @@ public class IssuedCredentialServiceImpl implements IssuedCredentialService {
     @SneakyThrows
     public Page<IssuedCredential> getAll(Pageable pageable) {
         Page<epermit.data.entities.IssuedCredential> entities = repository.findAll(pageable);
-        Page<IssuedCredential> dtoPage = entities.map(x-> modelMapper.map(x, IssuedCredential.class));
+        Page<IssuedCredential> dtoPage =
+                entities.map(x -> modelMapper.map(x, IssuedCredential.class));
         return dtoPage;
     }
 
     @Override
-    public IssuedCredential getById() {
+    public IssuedCredential getById(long id) {
+        return modelMapper.map(repository.findById(id), IssuedCredential.class);
+    }
+
+    @Override
+    public IssuedCredential getByQrCode(String qrCode) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public IssuedCredential getByQrCode() {
+    public IssuedCredential getBySerialNumber(String serialNumber) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public IssuedCredential getBySerialNumber() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public IssuedCredential create() {
-        // TODO Auto-generated method stub
-        return null;
+    public CreateResult create(CreateInput input) {
+        // check input if has error send error
+        // generate a pid for cred
+        // generate qr code
+        // generate cred jws
+        // send to aud
+        CreateResult result = CreateResult.builder().issued_credential(null).code("code")
+                .message("message").build();
+        return result;
     }
 
     @Override
