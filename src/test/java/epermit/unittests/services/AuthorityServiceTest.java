@@ -22,7 +22,7 @@ public class AuthorityServiceTest {
 	AuthorityRepository repository;
 
 	@Test
-	public void greetingShouldReturnMessageFromService() {
+	public void xTest() {
 		List<Authority> authorities = new ArrayList<>();
 		Authority a = new Authority();
 		a.setId((long)12);
@@ -30,6 +30,6 @@ public class AuthorityServiceTest {
 		when(repository.findAll()).thenReturn(authorities);
 		AuthorityServiceImpl service = new AuthorityServiceImpl(repository, new ModelMapper());
 		assertEquals(service.getAll().size(), 1);
-		//Mockito.verify(repository, Mockito.times(1)).findAll();
+		Mockito.verify(repository, Mockito.times(1)).findAll();
 	}
 }

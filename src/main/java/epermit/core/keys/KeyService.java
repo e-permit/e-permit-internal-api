@@ -1,11 +1,11 @@
 package epermit.core.keys;
 
-import com.nimbusds.jose.jwk.ECKey;
+import java.util.List;
 
-import org.springframework.data.util.Pair;
+import epermit.common.CommandResult;
 
 public interface KeyService {
-    ECKey getCurrentKey();
-    Pair<String, String> CreateKey(String kid);
-    void EnableKey(String kid); 
+    List<KeyDto> getKeys();
+    CommandResult CreateKey(String kid);
+    CommandResult EnableKey(long id); 
 }

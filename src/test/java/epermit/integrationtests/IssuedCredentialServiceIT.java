@@ -56,7 +56,7 @@ public class IssuedCredentialServiceIT {
             credentialRepository.save(cr);
         }
         Pageable pageable = PageRequest.of(1, 10, Sort.by("id").descending());
-        Page<epermit.core.issuedcredentials.IssuedCredential> r = credentialServiceImpl.getAll(pageable);
+        Page<epermit.core.issuedcredentials.IssuedCredentialDto> r = credentialServiceImpl.getAll(pageable);
         assertEquals(r.getContent().size(), 10);
         assertEquals(r.getTotalElements(), 30);
     }

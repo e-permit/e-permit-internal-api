@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -56,7 +55,7 @@ public class IssuedCredentialServiceTest {
         Page<IssuedCredential> foundPage = new PageImpl<>(crList, pageable, (long)20);
         when(repository.findAll(ArgumentMatchers.any(Pageable.class))).thenReturn(foundPage);
         IssuedCredentialServiceImpl service = new IssuedCredentialServiceImpl(repository, new ModelMapper());
-        Page<epermit.core.issuedcredentials.IssuedCredential> r = service.getAll(pageable);
+        Page<epermit.core.issuedcredentials.IssuedCredentialDto> r = service.getAll(pageable);
         assertEquals(r.getContent().size(), 10);
         assertEquals(r.getTotalElements(), 20);
     }

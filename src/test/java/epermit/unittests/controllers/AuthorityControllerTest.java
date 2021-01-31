@@ -1,11 +1,9 @@
 package epermit.unittests.controllers;
 
-import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.IOException;
@@ -26,7 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import epermit.controllers.AuthorityController;
-import epermit.core.aurthorities.Authority;
+import epermit.core.aurthorities.AuthorityDto;
 import epermit.core.aurthorities.AuthorityService;
 
 @WebMvcTest(AuthorityController.class)
@@ -52,15 +50,15 @@ public class AuthorityControllerTest {
 	}
 
 	@Test
-	public void greetingShouldReturnMessageFromService() throws Exception {
-		List<Authority> authorities = new ArrayList<>();
-		Authority a = new Authority();
+	public void xTest() throws Exception {
+		List<AuthorityDto> authorities = new ArrayList<>();
+		AuthorityDto a = new AuthorityDto();
 		a.setId((long) 12);
 		authorities.add(a);
 		when(service.getAll()).thenReturn(authorities);
 		MvcResult mvcResult = this.mockMvc.perform(get("/authorities")).andDo(print()).andExpect(status().isOk())
 				.andReturn();
-		Authority[] r = parseResponse(mvcResult, Authority[].class);
+		AuthorityDto[] r = parseResponse(mvcResult, AuthorityDto[].class);
 		assertEquals(r.length, 1);
 	}
 }

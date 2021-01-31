@@ -1,6 +1,6 @@
 package epermit.core.credentials;
 
-public interface CredentialStore {
+public interface CredentialService {
     // getAll(paging)
     // getByQrCode()
     // getByQrId()

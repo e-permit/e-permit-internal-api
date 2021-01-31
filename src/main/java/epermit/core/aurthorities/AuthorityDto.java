@@ -7,7 +7,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class Authority {
+public class AuthorityDto {
   private Long id;
 
   private String code;
@@ -22,8 +22,8 @@ public class Authority {
 
   private Date createdAt;
 
-  private List<AuthorityKey> keys = new ArrayList<>();
+  private List<AuthorityKeyDto> keys = new ArrayList<>();
 
-  private List<AuthorityQuota> quotas = new ArrayList<>();
+  private List<AuthorityQuotaDto> quotas = new ArrayList<>();
 
 }

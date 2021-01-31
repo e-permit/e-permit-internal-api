@@ -4,28 +4,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
-import org.slf4j.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import epermit.core.aurthorities.Authority;
+import epermit.common.CommandResult;
+import epermit.core.aurthorities.AuthorityDto;
 import epermit.core.aurthorities.AuthorityService;
-import epermit.core.aurthorities.CreateInput;
-import epermit.core.aurthorities.CreateKeyInput;
-import epermit.core.aurthorities.CreateKeyResult;
-import epermit.core.aurthorities.CreateQuotaInput;
-import epermit.core.aurthorities.CreateQuotaResult;
-import epermit.core.aurthorities.CreateResult;
-import epermit.core.aurthorities.RevokeKeyInput;
-import epermit.core.aurthorities.RevokeKeyResult;
-import epermit.core.aurthorities.RevokeQuotaInput;
-import epermit.core.aurthorities.RevokeQuotaResult;
+import epermit.core.aurthorities.CreateAuthorityInput;
+import epermit.core.aurthorities.CreateAuthorityKeyInput;
+import epermit.core.aurthorities.CreateAuthorityQuotaInput;
 import epermit.core.aurthorities.SetClaimsRuleInput;
-import epermit.core.aurthorities.SetClaimsRuleResult;
 import epermit.data.repositories.AuthorityRepository;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
+@Slf4j
 public class AuthorityServiceImpl implements AuthorityService {
 
     private final AuthorityRepository authorityRepository;
@@ -38,58 +31,58 @@ public class AuthorityServiceImpl implements AuthorityService {
 
     @Override
     @SneakyThrows
-    public List<Authority> getAll() {
+    public List<AuthorityDto> getAll() {
         List<epermit.data.entities.Authority> all = authorityRepository.findAll();
-        return all.stream().map(x -> modelMapper.map(x, Authority.class)).collect(Collectors.toList());
+        return all.stream().map(x -> modelMapper.map(x, AuthorityDto.class))
+                .collect(Collectors.toList());
     }
 
     @Override
     @SneakyThrows
-    public Authority getByCode(String code) {
+    public AuthorityDto getByCode(String code) {
+        log.info("message");
+        return null;
+    }
+
+    @Override
+    @SneakyThrows
+    public CommandResult create(CreateAuthorityInput input) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     @SneakyThrows
-    public CreateResult create(CreateInput input) {
+    public CommandResult createKey(CreateAuthorityKeyInput input) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     @SneakyThrows
-    public CreateKeyResult createKey(CreateKeyInput input) {
+    public CommandResult createQuota(CreateAuthorityQuotaInput input) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     @SneakyThrows
-    public CreateQuotaResult createQuota(CreateQuotaInput input) {
+    public CommandResult revokeKey(int id) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     @SneakyThrows
-    public RevokeKeyResult revokeKey(RevokeKeyInput input) {
+    public CommandResult revokeQuota(int id) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     @SneakyThrows
-    public RevokeQuotaResult revokeQuota(RevokeQuotaInput input) {
+    public CommandResult setClaimsRule(SetClaimsRuleInput input) {
         // TODO Auto-generated method stub
         return null;
     }
-
-    @Override
-    @SneakyThrows
-    public SetClaimsRuleResult setClaimsRule(SetClaimsRuleInput input) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
 }

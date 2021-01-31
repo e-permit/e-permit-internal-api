@@ -1,5 +1,5 @@
 package epermit.core.aurthorities;
 
-public class CreateQuotaResult {
+public class CreateAuthorityKeyInput {
     
 }

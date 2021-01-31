@@ -12,24 +12,27 @@ import epermit.utils.KeyUtils;
 public class KeyUtilTest {
     @Test
     void keyShouldBeCreatedWhenSaltAndPasswordIsCorrect() {
-        Pair<String, String> pair = KeyUtils.Create("1", "123456");
-        ECKey key = KeyUtils.GetKey("123456", pair.getFirst(), pair.getSecond());
+        KeyUtils utils = new KeyUtils("123456");
+        Pair<String, String> pair = utils.Create("1");
+        ECKey key = utils.GetKey(pair.getFirst(), pair.getSecond());
         Assertions.assertNotNull(key);
     }
 
     @Test
     void keyShouldNotBeCreatedWhenPasswordIsIncorrect() {
         Assertions.assertThrows(IllegalStateException.class, () -> {
-            Pair<String, String> pair = KeyUtils.Create("1", "123456");
-            ECKey key = KeyUtils.GetKey("1234567", pair.getFirst(), pair.getSecond());
+            KeyUtils utils = new KeyUtils("123456");
+            Pair<String, String> pair = utils.Create("1");
+            ECKey key = utils.GetKey(pair.getFirst(), pair.getSecond());
         });
     }
 
     @Test
     void keyShouldNotBeCreatedWhenSaltIsIncorrect() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            Pair<String, String> pair = KeyUtils.Create("1", "123456");
-            ECKey key = KeyUtils.GetKey("123456", pair.getFirst() + ".", pair.getSecond());
+            KeyUtils utils = new KeyUtils("123456");
+            Pair<String, String> pair = utils.Create("1");
+            ECKey key = utils.GetKey(pair.getFirst() + ".", pair.getSecond());
         });
     }
 }

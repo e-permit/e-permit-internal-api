@@ -5,7 +5,7 @@ import java.util.Date;
 import lombok.Data;
 
 @Data
-public class IssuedCredential {
+public class IssuedCredentialDto {
     private Long id;
 
     private String serialNumber;

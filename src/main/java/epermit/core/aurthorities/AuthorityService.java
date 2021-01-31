@@ -2,13 +2,15 @@ package epermit.core.aurthorities;
 
 import java.util.List;
 
+import epermit.common.CommandResult;
+
 public interface AuthorityService {
-    List<Authority> getAll();
-    Authority getByCode(String code);
-    CreateResult create(CreateInput input);
-    CreateKeyResult createKey(CreateKeyInput input);
-    CreateQuotaResult createQuota(CreateQuotaInput input);
-    RevokeKeyResult revokeKey(RevokeKeyInput input);
-    RevokeQuotaResult revokeQuota(RevokeQuotaInput input);
-    SetClaimsRuleResult setClaimsRule(SetClaimsRuleInput input);
+    List<AuthorityDto> getAll();
+    AuthorityDto getByCode(String code);
+    CommandResult create(CreateAuthorityInput input);
+    CommandResult createKey(CreateAuthorityKeyInput input);
+    CommandResult createQuota(CreateAuthorityQuotaInput input);
+    CommandResult revokeKey(int id);
+    CommandResult revokeQuota(int id);
+    CommandResult setClaimsRule(SetClaimsRuleInput input);
 }

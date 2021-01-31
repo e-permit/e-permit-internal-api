@@ -10,24 +10,22 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import epermit.core.issuedcredentials.IssuedCredential;
+import epermit.core.issuedcredentials.IssuedCredentialDto;
 import epermit.core.issuedcredentials.IssuedCredentialService;
-import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/issued_credentials")
-@Slf4j
 public class IssuedCredentialController {
 
-    private final IssuedCredentialService credentialService;
+    private final IssuedCredentialService credentialHandler;
 
-    public IssuedCredentialController(IssuedCredentialService credentialService) {
-        this.credentialService = credentialService;
+    public IssuedCredentialController(IssuedCredentialService credentialHandler) {
+        this.credentialHandler = credentialHandler;
     }
 
     @GetMapping()
-    public ResponseEntity<Page<IssuedCredential>> getAll() {
-        return new ResponseEntity<>(credentialService.getAll(null), HttpStatus.OK);
+    public ResponseEntity<Page<IssuedCredentialDto>> getAll() {
+        return new ResponseEntity<>(credentialHandler.getAll(null), HttpStatus.OK);
     }
     
 }

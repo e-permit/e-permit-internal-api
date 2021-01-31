@@ -6,7 +6,7 @@ import java.util.Map;
 import lombok.Data;
 
 @Data
-public class CreateInput {
+public class CreateIssuedCredentialInput {
     private String aud;
 
     private int pt;
