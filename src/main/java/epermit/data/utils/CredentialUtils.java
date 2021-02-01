@@ -1,4 +1,4 @@
-package epermit.utils;
+package epermit.data.utils;
 
 import java.util.Date;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -11,7 +11,7 @@ import com.nimbusds.jwt.SignedJWT;
 
 
 public class CredentialUtils {
-    private ECKey ecKey;
+    /*private ECKey ecKey;
 
     private String issuer;
 
@@ -34,5 +34,5 @@ public class CredentialUtils {
         signedJWT.sign(signer);
         String jwt = signedJWT.serialize();
         return jwt;
-    }
+    }*/
 }

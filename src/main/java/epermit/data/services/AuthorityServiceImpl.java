@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
-
+import org.springframework.transaction.support.TransactionTemplate;
 import epermit.common.CommandResult;
 import epermit.core.aurthorities.AuthorityDto;
 import epermit.core.aurthorities.AuthorityService;
@@ -23,10 +23,13 @@ public class AuthorityServiceImpl implements AuthorityService {
 
     private final AuthorityRepository authorityRepository;
     private final ModelMapper modelMapper;
+    private final TransactionTemplate transactionTemplate;
 
-    public AuthorityServiceImpl(AuthorityRepository authorityRepository, ModelMapper modelMapper) {
+    public AuthorityServiceImpl(AuthorityRepository authorityRepository, ModelMapper modelMapper,
+            TransactionTemplate transactionTemplate) {
         this.authorityRepository = authorityRepository;
         this.modelMapper = modelMapper;
+        this.transactionTemplate = transactionTemplate;
     }
 
     @Override
@@ -47,42 +50,54 @@ public class AuthorityServiceImpl implements AuthorityService {
     @Override
     @SneakyThrows
     public CommandResult create(CreateAuthorityInput input) {
-        // TODO Auto-generated method stub
+        transactionTemplate.executeWithoutResult(s -> {
+
+        });
         return null;
     }
 
     @Override
     @SneakyThrows
     public CommandResult createKey(CreateAuthorityKeyInput input) {
-        // TODO Auto-generated method stub
+        transactionTemplate.executeWithoutResult(s -> {
+
+        });
         return null;
     }
 
     @Override
     @SneakyThrows
     public CommandResult createQuota(CreateAuthorityQuotaInput input) {
-        // TODO Auto-generated method stub
+        transactionTemplate.executeWithoutResult(s -> {
+
+        });
         return null;
     }
 
     @Override
     @SneakyThrows
     public CommandResult revokeKey(int id) {
-        // TODO Auto-generated method stub
+        transactionTemplate.executeWithoutResult(s -> {
+
+        });
         return null;
     }
 
     @Override
     @SneakyThrows
     public CommandResult revokeQuota(int id) {
-        // TODO Auto-generated method stub
+        transactionTemplate.executeWithoutResult(s -> {
+
+        });
         return null;
     }
 
     @Override
     @SneakyThrows
     public CommandResult setClaimsRule(SetClaimsRuleInput input) {
-        // TODO Auto-generated method stub
+        transactionTemplate.executeWithoutResult(s -> {
+
+        });
         return null;
     }
 }

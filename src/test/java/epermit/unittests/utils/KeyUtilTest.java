@@ -7,12 +7,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.util.Pair;
 
-import epermit.utils.KeyUtils;
+import epermit.data.utils.KeyUtils;
 
 public class KeyUtilTest {
     @Test
     void keyShouldBeCreatedWhenSaltAndPasswordIsCorrect() {
-        KeyUtils utils = new KeyUtils("123456");
+        KeyUtils utils = new KeyUtils();
         Pair<String, String> pair = utils.Create("1");
         ECKey key = utils.GetKey(pair.getFirst(), pair.getSecond());
         Assertions.assertNotNull(key);

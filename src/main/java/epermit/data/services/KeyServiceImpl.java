@@ -7,13 +7,16 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionOperations;
+import org.springframework.transaction.support.TransactionTemplate;
 import epermit.common.CommandResult;
 import epermit.core.keys.*;
 import epermit.data.entities.Key;
 import epermit.data.repositories.KeyRepository;
-import epermit.utils.KeyUtils;
+import epermit.data.utils.KeyUtils;
 import lombok.SneakyThrows;
 
 @Component
@@ -22,11 +25,14 @@ public class KeyServiceImpl implements KeyService {
     private final ModelMapper modelMapper;
     private final KeyRepository repository;
     private final KeyUtils keyUtils;
+    private final TransactionTemplate transactionTemplate;
 
-    public KeyServiceImpl(KeyRepository repository, ModelMapper modelMapper, KeyUtils keyUtils) {
+    public KeyServiceImpl(KeyRepository repository, ModelMapper modelMapper, KeyUtils keyUtils,
+            TransactionTemplate transactionTemplate) {
         this.repository = repository;
         this.modelMapper = modelMapper;
         this.keyUtils = keyUtils;
+        this.transactionTemplate = transactionTemplate;
     }
 
     @Override
@@ -38,7 +44,6 @@ public class KeyServiceImpl implements KeyService {
 
     @Override
     @SneakyThrows
-    @Transactional
     public CommandResult CreateKey(String kid) {
         Pair<String, String> keyInfo = keyUtils.Create(kid);
         Key k = new Key();
@@ -47,21 +52,25 @@ public class KeyServiceImpl implements KeyService {
         k.setEnabled(false);
         k.setSalt(keyInfo.getFirst());
         k.setContent(keyInfo.getSecond());
-        repository.save(k);
-        return CommandResult.builder().build();
+        long id = transactionTemplate.execute(status -> {
+            repository.save(k);
+            return k.getId();
+        });
+
+        return CommandResult.builder().prop("key_id", Long.toString(id)).build();
     }
 
     @Override
     @SneakyThrows
-    @Transactional
     public CommandResult EnableKey(long id) {
-        Key oldKey = repository.getEnabled();
-        oldKey.setEnabled(false);
-        Key newOne = repository.findById(id).get();
-        newOne.setEnabled(true);
-        repository.save(oldKey);
-        repository.save(newOne);
-
+        transactionTemplate.executeWithoutResult(cx -> {
+            Key oldKey = repository.getEnabled();
+            oldKey.setEnabled(false);
+            Key newOne = repository.findById(id).get();
+            newOne.setEnabled(true);
+            repository.save(oldKey);
+            repository.save(newOne);
+        });
         return CommandResult.builder().build();
     }
 

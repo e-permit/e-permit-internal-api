@@ -16,7 +16,7 @@ import epermit.config.EPermitProperties;
 import epermit.data.entities.Key;
 import epermit.data.repositories.KeyRepository;
 import epermit.data.services.KeyServiceImpl;
-import epermit.utils.KeyUtils;
+import epermit.data.utils.KeyUtils;
 
 @ExtendWith(MockitoExtension.class)
 public class KeyServiceTest {
@@ -32,7 +32,7 @@ public class KeyServiceTest {
 
     @Test
     public void shouldGetEnabledKey() {
-        KeyUtils utils = new KeyUtils("123456");
+        KeyUtils utils = new KeyUtils();
         Pair<String, String> p = utils.Create("1");
         Key key = new Key();
         key.setContent(p.getSecond());
@@ -47,7 +47,7 @@ public class KeyServiceTest {
 
     @Test
     public void shouldCreateKey() {
-        KeyUtils utils = new KeyUtils("password");
+        KeyUtils utils = new KeyUtils();
         Pair<String, String> p = utils.Create("1");
         Key key = new Key();
         key.setContent(p.getSecond());
