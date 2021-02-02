@@ -1,4 +1,4 @@
-package epermit.integrationtests;
+package epermit.integrationtests.services;
 
 import static org.junit.Assert.assertEquals;
 
@@ -16,11 +16,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
+import epermit.common.CustomPostgresContainer;
 import epermit.data.entities.IssuedCredential;
 import epermit.data.repositories.IssuedCredentialRepository;
 import epermit.data.services.IssuedCredentialServiceImpl;
-import epermit.integrationtests.common.CustomPostgresContainer;
 
 
 @SpringBootTest

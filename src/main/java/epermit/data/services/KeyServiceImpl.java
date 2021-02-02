@@ -18,8 +18,10 @@ import epermit.data.entities.Key;
 import epermit.data.repositories.KeyRepository;
 import epermit.data.utils.KeyUtils;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
+@Slf4j
 public class KeyServiceImpl implements KeyService {
 
     private final ModelMapper modelMapper;
@@ -46,6 +48,8 @@ public class KeyServiceImpl implements KeyService {
     @SneakyThrows
     public CommandResult CreateKey(String kid) {
         Pair<String, String> keyInfo = keyUtils.Create(kid);
+        log.info("------id------");
+        log.info(keyInfo.getFirst());
         Key k = new Key();
         k.setKid(kid);
         k.setCreatedAt(new Date());
@@ -56,7 +60,7 @@ public class KeyServiceImpl implements KeyService {
             repository.save(k);
             return k.getId();
         });
-
+        
         return CommandResult.builder().prop("key_id", Long.toString(id)).build();
     }
 

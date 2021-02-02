@@ -16,18 +16,20 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import org.junit.jupiter.api.Test;
-
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-
+import epermit.common.MvcTestUtils;
 import epermit.controllers.AuthorityController;
 import epermit.core.aurthorities.AuthorityDto;
 import epermit.core.aurthorities.AuthorityService;
 
 @WebMvcTest(AuthorityController.class)
+@ExtendWith(MockitoExtension.class)
 public class AuthorityControllerTest {
 
 	@Autowired
@@ -36,19 +38,6 @@ public class AuthorityControllerTest {
 	@MockBean
 	private AuthorityService service;
 
-	private static final ObjectMapper MAPPER = new ObjectMapper()
-			.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-			.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).registerModule(new JavaTimeModule());
-
-	public static <T> T parseResponse(MvcResult result, Class<T> responseClass) {
-		try {
-			String contentAsString = result.getResponse().getContentAsString();
-			return MAPPER.readValue(contentAsString, responseClass);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
 	@Test
 	public void xTest() throws Exception {
 		List<AuthorityDto> authorities = new ArrayList<>();
@@ -56,9 +45,9 @@ public class AuthorityControllerTest {
 		a.setId((long) 12);
 		authorities.add(a);
 		when(service.getAll()).thenReturn(authorities);
-		MvcResult mvcResult = this.mockMvc.perform(get("/authorities")).andDo(print()).andExpect(status().isOk())
+		MvcResult mvcResult = mockMvc.perform(get("/authorities")).andDo(print()).andExpect(status().isOk())
 				.andReturn();
-		AuthorityDto[] r = parseResponse(mvcResult, AuthorityDto[].class);
+		AuthorityDto[] r = MvcTestUtils.parseResponse(mvcResult, AuthorityDto[].class);
 		assertEquals(r.length, 1);
 	}
 }

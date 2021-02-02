@@ -9,9 +9,11 @@ import org.springframework.data.util.Pair;
 import org.springframework.security.crypto.encrypt.Encryptors;
 import org.springframework.security.crypto.encrypt.TextEncryptor;
 import org.springframework.security.crypto.keygen.KeyGenerators;
+import org.springframework.stereotype.Component;
 import epermit.config.EPermitProperties;
 import lombok.SneakyThrows;
 
+@Component
 public class KeyUtils {
     private EPermitProperties props;
     public KeyUtils(EPermitProperties props) {

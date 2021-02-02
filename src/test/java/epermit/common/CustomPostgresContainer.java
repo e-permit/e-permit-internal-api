@@ -1,4 +1,4 @@
-package epermit.integrationtests.common;
+package epermit.common;
 
 import org.slf4j.*;
 import org.testcontainers.containers.PostgreSQLContainer;

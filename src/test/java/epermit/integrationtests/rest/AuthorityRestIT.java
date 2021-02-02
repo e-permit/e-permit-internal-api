@@ -1,4 +1,4 @@
-package epermit.integrationtests;
+package epermit.integrationtests.rest;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -23,11 +23,9 @@ import org.springframework.test.context.support.TestPropertySourceUtils;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
+import epermit.common.CustomPostgresContainer;
 import epermit.data.entities.Authority;
 import epermit.data.repositories.AuthorityRepository;
-import epermit.integrationtests.common.CustomPostgresContainer;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Testcontainers
@@ -51,11 +49,14 @@ public class AuthorityRestIT {
     @Rule
     public TemporaryFolder tempFolder = new TemporaryFolder();
 
-    static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+    static class Initializer
+            implements ApplicationContextInitializer<ConfigurableApplicationContext> {
         @Override
         public void initialize(ConfigurableApplicationContext applicationContext) {
             TestPropertySourceUtils.addInlinedPropertiesToEnvironment(applicationContext,
                     "epermit.jksfile=" + "PROPERTY_FIRST_VALUE");
+            TestPropertySourceUtils.addInlinedPropertiesToEnvironment(applicationContext,
+                    "spring.datasource.url=" + postgreSQLContainer.getJdbcUrl());
             // TestPropertyValues.of("epermit.jksfile=abc").applyTo(applicationContext);
         }
     }
@@ -69,7 +70,9 @@ public class AuthorityRestIT {
         a.setPermitUri("permitUri");
         authorityRepository.save(a);
         System.out.println(authorityRepository.count());
-        /*assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/authorities", String.class))
-                .contains("Hello, World");*/
+        /*
+         * assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/authorities",
+         * String.class)) .contains("Hello, World");
+         */
     }
 }
