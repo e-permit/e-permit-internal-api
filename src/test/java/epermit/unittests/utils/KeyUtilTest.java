@@ -11,6 +11,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.util.Pair;
 import epermit.config.EPermitProperties;
+import epermit.data.entities.Key;
+import epermit.data.repositories.KeyRepository;
 import epermit.data.utils.KeyUtils;
 
 @ExtendWith(MockitoExtension.class)
@@ -18,23 +20,25 @@ public class KeyUtilTest {
     @Mock
     EPermitProperties properties;
 
+    @Mock
+    KeyRepository repository;
     @Test
     void keyShouldBeCreatedWhenSaltAndPasswordIsCorrect() {
         when(properties.getKeyPassword()).thenReturn("123456");
-        KeyUtils utils = new KeyUtils(properties);
-        Pair<String, String> pair = utils.Create("1");
-        ECKey key = utils.GetKey(pair.getFirst(), pair.getSecond());
-        Assertions.assertNotNull(key);
+        KeyUtils utils = new KeyUtils(properties, repository);
+        Key key = utils.Create("1");
+        Assertions.assertNotNull(key.getSalt());
     }
 
     @Test
     void keyShouldNotBeCreatedWhenPasswordIsIncorrect() {
         when(properties.getKeyPassword()).thenReturn("123456");
         Assertions.assertThrows(IllegalStateException.class, () -> {
-            KeyUtils utils = new KeyUtils(properties);
-            Pair<String, String> pair = utils.Create("1");
+            KeyUtils utils = new KeyUtils(properties, repository);
+            Key k = utils.Create("1");
+            when(repository.getEnabled()).thenReturn(k);
             when(properties.getKeyPassword()).thenReturn("1234567");
-            ECKey key = utils.GetKey(pair.getFirst(), pair.getSecond());
+            ECKey key = utils.GetKey();
         });
     }
 
@@ -42,9 +46,11 @@ public class KeyUtilTest {
     void keyShouldNotBeCreatedWhenSaltIsIncorrect() {
         when(properties.getKeyPassword()).thenReturn("123456");
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            KeyUtils utils = new KeyUtils(properties);
-            Pair<String, String> pair = utils.Create("1");
-            ECKey key = utils.GetKey(pair.getFirst() + ".", pair.getSecond());
+            KeyUtils utils = new KeyUtils(properties, repository);
+            Key k = utils.Create("1");
+            k.setSalt("123");
+            when(repository.getEnabled()).thenReturn(k);
+            ECKey key = utils.GetKey();
         });
     }
 }

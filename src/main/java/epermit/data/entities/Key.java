@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 public class Key {
     @Id
     @GeneratedValue
-    private Long id;
+    private int id;
 
     @Column(name = "kid", nullable = false)
     private String kid;

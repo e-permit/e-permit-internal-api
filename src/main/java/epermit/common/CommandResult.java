@@ -1,4 +1,5 @@
 package epermit.common;
+
 import java.util.Map;
 
 import lombok.Builder;
@@ -9,13 +10,19 @@ import lombok.Singular;
 @Builder
 // @SuperBuilder(toBuilder = true) use @SuperBuilder(toBuilder = true) for child classes
 public class CommandResult {
-    private final int statusCode;
-    
-    private final String errorCode;
 
-    private final String errorMessage;
-    
-    @Singular private Map<String, String> props;
+    private final Boolean isSucceed;
 
-    //private T result; usage: CommandResult.<T>builder() 
+    private final String resultCode;
+
+    private final String resultMessage;
+
+    @Singular
+    private Map<String, String> props;
+
+    public static CommandResult success() {
+        return CommandResult.builder().isSucceed(true).build();
+    }
+
+    // private T result; usage: CommandResult.<T>builder()
 }

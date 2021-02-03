@@ -47,26 +47,18 @@ public class KeyServiceImpl implements KeyService {
     @Override
     @SneakyThrows
     public CommandResult CreateKey(String kid) {
-        Pair<String, String> keyInfo = keyUtils.Create(kid);
-        log.info("------id------");
-        log.info(keyInfo.getFirst());
-        Key k = new Key();
-        k.setKid(kid);
-        k.setCreatedAt(new Date());
-        k.setEnabled(false);
-        k.setSalt(keyInfo.getFirst());
-        k.setContent(keyInfo.getSecond());
-        long id = transactionTemplate.execute(status -> {
+        Key k = keyUtils.Create(kid);
+        int id = transactionTemplate.execute(status -> {
             repository.save(k);
             return k.getId();
         });
         
-        return CommandResult.builder().prop("key_id", Long.toString(id)).build();
+        return CommandResult.success();
     }
 
     @Override
     @SneakyThrows
-    public CommandResult EnableKey(long id) {
+    public CommandResult EnableKey(int id) {
         transactionTemplate.executeWithoutResult(cx -> {
             Key oldKey = repository.getEnabled();
             oldKey.setEnabled(false);
@@ -75,7 +67,7 @@ public class KeyServiceImpl implements KeyService {
             repository.save(oldKey);
             repository.save(newOne);
         });
-        return CommandResult.builder().build();
+        return CommandResult.success();
     }
 
 }

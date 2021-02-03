@@ -6,9 +6,9 @@ import lombok.Data;
 @Data
 public class AuthorityKeyDto {
   
-    private Long id;
+    private int id;
 
-    private int kid;
+    private String kid;
 
     private Boolean isActive;
     

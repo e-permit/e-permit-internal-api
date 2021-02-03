@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class AuthorityQuotaDto {
 
-    private Long id;
+    private int id;
 
     private int year;
 

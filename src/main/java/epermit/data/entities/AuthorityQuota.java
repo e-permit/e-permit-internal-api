@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 public class AuthorityQuota {
     @Id
     @GeneratedValue
-    private Long id;
+    private int id;
 
     @Column(name = "year", nullable = false)
     private int year;

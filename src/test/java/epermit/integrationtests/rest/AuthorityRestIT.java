@@ -67,7 +67,7 @@ public class AuthorityRestIT {
         a.setCode("tr");
         a.setCreatedAt(new Date());
         a.setName("name");
-        a.setPermitUri("permitUri");
+        a.setUri("permitUri");
         authorityRepository.save(a);
         System.out.println(authorityRepository.count());
         /*

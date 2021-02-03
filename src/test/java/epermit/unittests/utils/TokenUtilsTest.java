@@ -15,7 +15,6 @@ import com.nimbusds.jwt.SignedJWT;
 import org.junit.jupiter.api.Test;
 
 import epermit.data.utils.*;
-import epermit.data.utils.AuthUtils;
 import lombok.SneakyThrows;
 
 class TokenUtilsTest {

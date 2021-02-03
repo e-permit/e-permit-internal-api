@@ -1,5 +1,8 @@
 package epermit.core.aurthorities;
 
-public class SetClaimsRuleInput {
+import lombok.Data;
 
+@Data
+public class SetClaimsRuleInput {
+    private String rule;
 }

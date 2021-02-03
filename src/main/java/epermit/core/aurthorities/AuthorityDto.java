@@ -8,17 +8,15 @@ import lombok.Data;
 
 @Data
 public class AuthorityDto {
-  private Long id;
+  private int id;
 
   private String code;
 
   private String name;
 
-  private String permitUri;
+  private String uri;
 
   private String claimsRule;
-
-  private Boolean isActive;
 
   private Date createdAt;
 

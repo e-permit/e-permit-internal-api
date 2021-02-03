@@ -42,7 +42,7 @@ public class AuthorityControllerTest {
 	public void xTest() throws Exception {
 		List<AuthorityDto> authorities = new ArrayList<>();
 		AuthorityDto a = new AuthorityDto();
-		a.setId((long) 12);
+		a.setId(12);
 		authorities.add(a);
 		when(service.getAll()).thenReturn(authorities);
 		MvcResult mvcResult = mockMvc.perform(get("/authorities")).andDo(print()).andExpect(status().isOk())

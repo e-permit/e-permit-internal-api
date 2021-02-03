@@ -18,7 +18,8 @@ public class IssuedCredentialServiceImpl implements IssuedCredentialService {
     private final IssuedCredentialRepository repository;
     private final ModelMapper modelMapper;
 
-    public IssuedCredentialServiceImpl(IssuedCredentialRepository repository, ModelMapper modelMapper) {
+    public IssuedCredentialServiceImpl(IssuedCredentialRepository repository,
+            ModelMapper modelMapper) {
         this.repository = repository;
         this.modelMapper = modelMapper;
     }
@@ -27,7 +28,8 @@ public class IssuedCredentialServiceImpl implements IssuedCredentialService {
     @SneakyThrows
     public Page<IssuedCredentialDto> getAll(Pageable pageable) {
         Page<epermit.data.entities.IssuedCredential> entities = repository.findAll(pageable);
-        Page<IssuedCredentialDto> dtoPage = entities.map(x -> modelMapper.map(x, IssuedCredentialDto.class));
+        Page<IssuedCredentialDto> dtoPage =
+                entities.map(x -> modelMapper.map(x, IssuedCredentialDto.class));
         return dtoPage;
     }
 
@@ -38,15 +40,13 @@ public class IssuedCredentialServiceImpl implements IssuedCredentialService {
 
     @Override
     public IssuedCredentialDto getByQrCode(String qrCode) {
-        CommandResult.builder().statusCode(400).errorCode("message").build();
-        // TODO Auto-generated method stub
-        return null;
+        return modelMapper.map(repository.findByQrCode(qrCode), IssuedCredentialDto.class);
     }
 
     @Override
     public IssuedCredentialDto getBySerialNumber(String serialNumber) {
-        // TODO Auto-generated method stub
-        return null;
+        return modelMapper.map(repository.findBySerialNumber(serialNumber),
+                IssuedCredentialDto.class);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class IssuedCredentialServiceImpl implements IssuedCredentialService {
         // generate a pid for cred
         // generate qr code
         // generate cred jws
-        CommandResult result = CommandResult.builder().errorCode("code").errorCode("message").build();
+        CommandResult result = CommandResult.builder().resultCode("code").build();
         return result;
     }
 

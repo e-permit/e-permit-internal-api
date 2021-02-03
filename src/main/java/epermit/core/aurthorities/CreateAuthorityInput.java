@@ -1,8 +1,12 @@
 package epermit.core.aurthorities;
 
-import org.springframework.validation.annotation.Validated;
+import lombok.Data;
 
-@Validated
+@Data
 public class CreateAuthorityInput {
-    
+    private String code;
+
+    private String uri;
+
+    private String Name;
 }

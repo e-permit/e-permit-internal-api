@@ -23,7 +23,7 @@ public class Authority {
 
   @Id
   @GeneratedValue
-  private Long id;
+  private int id;
 
   @Column(name = "code", nullable = false)
   private String code;
@@ -31,8 +31,8 @@ public class Authority {
   @Column(name = "name", nullable = false)
   private String name;
 
-  @Column(name = "permit_uri", nullable = false)
-  private String permitUri;
+  @Column(name = "uri", nullable = false)
+  private String uri;
 
   @Column(name = "claims_rule", nullable = true, length=1000)
   private String claimsRule;
