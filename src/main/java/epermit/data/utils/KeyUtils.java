@@ -42,7 +42,7 @@ public class KeyUtils {
 
     @SneakyThrows
     public ECKey GetKey(){
-        Key k = repository.getEnabled();
+        Key k = repository.findOneByEnabledTrue().get();
         TextEncryptor decryptor = Encryptors.text(props.getKeyPassword(), k.getSalt());
         ECKey key = ECKey.parse(decryptor.decrypt(k.getContent()));
         return key;

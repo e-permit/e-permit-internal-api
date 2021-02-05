@@ -60,7 +60,7 @@ public class KeyServiceImpl implements KeyService {
     @SneakyThrows
     public CommandResult EnableKey(int id) {
         transactionTemplate.executeWithoutResult(cx -> {
-            Key oldKey = repository.getEnabled();
+            Key oldKey = repository.findOneByEnabledTrue().get();
             oldKey.setEnabled(false);
             Key newOne = repository.findById(id).get();
             newOne.setEnabled(true);

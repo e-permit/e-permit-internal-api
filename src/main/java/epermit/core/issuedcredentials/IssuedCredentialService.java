@@ -11,7 +11,7 @@ public interface IssuedCredentialService {
     IssuedCredentialDto getByQrCode(String qrCode);
     IssuedCredentialDto getBySerialNumber(String serialNumber);
     CommandResult create(CreateIssuedCredentialInput input);
-    CommandResult send();
-    CommandResult revoke();
-    CommandResult setUsed();
+    CommandResult send(long id);
+    CommandResult revoke(long id);
+    CommandResult setUsed(long id); // from verifier
 }

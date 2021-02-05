@@ -30,6 +30,7 @@ public class IssuedCredentialServiceTest {
     @Mock
     IssuedCredentialRepository repository;
 
+
     @Test
     public void greetingShouldReturnMessageFromService() {
         List<IssuedCredential> crList = new ArrayList<>();

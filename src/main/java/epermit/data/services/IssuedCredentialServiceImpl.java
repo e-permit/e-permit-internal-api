@@ -1,7 +1,7 @@
 package epermit.data.services;
 
 import java.util.List;
-
+import java.util.Optional;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,6 +9,10 @@ import org.springframework.stereotype.Component;
 
 import epermit.common.CommandResult;
 import epermit.core.issuedcredentials.*;
+import epermit.data.entities.Authority;
+import epermit.data.entities.AuthorityQuota;
+import epermit.data.entities.IssuedCredential;
+import epermit.data.repositories.AuthorityRepository;
 import epermit.data.repositories.IssuedCredentialRepository;
 import lombok.SneakyThrows;
 
@@ -16,12 +20,15 @@ import lombok.SneakyThrows;
 public class IssuedCredentialServiceImpl implements IssuedCredentialService {
 
     private final IssuedCredentialRepository repository;
+    private final AuthorityRepository authorityRepository;
     private final ModelMapper modelMapper;
 
     public IssuedCredentialServiceImpl(IssuedCredentialRepository repository,
-            ModelMapper modelMapper) {
+            ModelMapper modelMapper,
+            AuthorityRepository authorityRepository) {
         this.repository = repository;
         this.modelMapper = modelMapper;
+        this.authorityRepository = authorityRepository;
     }
 
     @Override
@@ -35,23 +42,26 @@ public class IssuedCredentialServiceImpl implements IssuedCredentialService {
 
     @Override
     public IssuedCredentialDto getById(long id) {
-        return modelMapper.map(repository.findById(id), IssuedCredentialDto.class);
+        return modelMapper.map(repository.findById(id).get(), IssuedCredentialDto.class);
     }
 
     @Override
     public IssuedCredentialDto getByQrCode(String qrCode) {
-        return modelMapper.map(repository.findByQrCode(qrCode), IssuedCredentialDto.class);
+        return modelMapper.map(repository.findOneByQrCode(qrCode).get(), IssuedCredentialDto.class);
     }
 
     @Override
     public IssuedCredentialDto getBySerialNumber(String serialNumber) {
-        return modelMapper.map(repository.findBySerialNumber(serialNumber),
+        return modelMapper.map(repository.findOneBySerialNumber(serialNumber),
                 IssuedCredentialDto.class);
     }
 
     @Override
     public CommandResult create(CreateIssuedCredentialInput input) {
-        // check input if has error send error
+        Authority authority = authorityRepository.findByCode(input.getAud());
+        Optional<IssuedCredential> lastCr = repository.findFirstByRevokedTrue();
+        authority.getQuotas().stream().filter(x-> x.getYear() == input.getPy() && x.getDirection() == 1);
+        // find all credential
         // generate a pid for cred
         // generate qr code
         // generate cred jws
@@ -60,19 +70,19 @@ public class IssuedCredentialServiceImpl implements IssuedCredentialService {
     }
 
     @Override
-    public CommandResult send() {
+    public CommandResult send(long id) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public CommandResult revoke() {
+    public CommandResult revoke(long id) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public CommandResult setUsed() {
+    public CommandResult setUsed(long id) {
         // TODO Auto-generated method stub
         return null;
     }

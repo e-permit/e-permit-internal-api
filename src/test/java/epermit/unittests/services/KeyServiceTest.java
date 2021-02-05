@@ -44,7 +44,7 @@ public class KeyServiceTest {
         when(properties.getKeyPassword()).thenReturn("123456");
         KeyUtils utils = new KeyUtils(properties, null);
         Key key =utils.Create("1"); 
-        when(repository.getEnabled()).thenReturn(key);
+        when(repository.findOneByEnabledTrue().get()).thenReturn(key);
         KeyServiceImpl service = new KeyServiceImpl(repository, mapper, utils, template);
         CommandResult r = service.CreateKey("1");
         Assertions.assertNotNull(r.getProps().get("key_id"));

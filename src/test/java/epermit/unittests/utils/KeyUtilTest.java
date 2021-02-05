@@ -36,7 +36,7 @@ public class KeyUtilTest {
         Assertions.assertThrows(IllegalStateException.class, () -> {
             KeyUtils utils = new KeyUtils(properties, repository);
             Key k = utils.Create("1");
-            when(repository.getEnabled()).thenReturn(k);
+            when(repository.findOneByEnabledTrue().get()).thenReturn(k);
             when(properties.getKeyPassword()).thenReturn("1234567");
             ECKey key = utils.GetKey();
         });
@@ -49,7 +49,7 @@ public class KeyUtilTest {
             KeyUtils utils = new KeyUtils(properties, repository);
             Key k = utils.Create("1");
             k.setSalt("123");
-            when(repository.getEnabled()).thenReturn(k);
+            when(repository.findOneByEnabledTrue().get()).thenReturn(k);
             ECKey key = utils.GetKey();
         });
     }
