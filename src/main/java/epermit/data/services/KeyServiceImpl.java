@@ -46,7 +46,7 @@ public class KeyServiceImpl implements KeyService {
 
     @Override
     @SneakyThrows
-    public CommandResult CreateKey(String kid) {
+    public CommandResult createKey(String kid) {
         Key k = keyUtils.Create(kid);
         int id = transactionTemplate.execute(status -> {
             repository.save(k);
@@ -58,7 +58,7 @@ public class KeyServiceImpl implements KeyService {
 
     @Override
     @SneakyThrows
-    public CommandResult EnableKey(int id) {
+    public CommandResult enableKey(int id) {
         transactionTemplate.executeWithoutResult(cx -> {
             Key oldKey = repository.findOneByEnabledTrue().get();
             oldKey.setEnabled(false);

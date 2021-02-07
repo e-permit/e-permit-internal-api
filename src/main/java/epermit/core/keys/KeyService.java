@@ -6,6 +6,6 @@ import epermit.common.CommandResult;
 
 public interface KeyService {
     List<KeyDto> getKeys();
-    CommandResult CreateKey(String kid);
-    CommandResult EnableKey(int id); 
+    CommandResult createKey(String kid);
+    CommandResult enableKey(int id); 
 }

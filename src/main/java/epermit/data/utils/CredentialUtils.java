@@ -1,5 +1,7 @@
 package epermit.data.utils;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit; 
 import java.util.Date;
 import java.util.Optional;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -10,11 +12,13 @@ import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import org.springframework.stereotype.Component;
+import epermit.config.EPermitProperties;
 import epermit.core.issuedcredentials.IssuedCredentialService;
 import epermit.data.entities.Authority;
 import epermit.data.entities.IssuedCredential;
 import epermit.data.repositories.AuthorityRepository;
 import epermit.data.repositories.IssuedCredentialRepository;
+import lombok.SneakyThrows;
 
 @Component
 public class CredentialUtils {
@@ -22,15 +26,18 @@ public class CredentialUtils {
     private final AuthorityRepository authorityRepository;
     private final IssuedCredentialRepository issuedCredentialRepository;
     private final KeyUtils keyUtils;
+    private final EPermitProperties props;
 
     public CredentialUtils(AuthorityRepository authorityRepository,
-            IssuedCredentialRepository issuedCredentialRepository, KeyUtils keyUtils) {
+            IssuedCredentialRepository issuedCredentialRepository, KeyUtils keyUtils,
+            EPermitProperties props) {
         this.authorityRepository = authorityRepository;
         this.keyUtils = keyUtils;
         this.issuedCredentialRepository = issuedCredentialRepository;
+        this.props = props;
     }
 
-    public Integer GetPermitId(String aud, int py, int pt) {
+    public Integer getPermitId(String aud, int py, int pt) {
         Authority authority = authorityRepository.findByCode(aud);
         Optional<IssuedCredential> lastCr = issuedCredentialRepository.findFirstByRevokedTrue();
         authority.getQuotas().stream()
@@ -39,43 +46,61 @@ public class CredentialUtils {
         return null;
     }
 
-    public String CreatePermitQrCode() {
+    @SneakyThrows
+    public String createToken(String aud) {
+        //Instant.now().plus(1, ChronoUnit.YEARS);
+        //Date d = Date.from(Instant.now());
+        //LocalDateTime.now(ZoneOffset.UTC).plusYears(1).plusMonths(1);
+        Date iat = new Date();
+        Date exp = new Date(new Date().getTime() + 60 * 60 * 1000);
+        JWTClaimsSet.Builder claimsSet = new JWTClaimsSet.Builder().issuer(props.getIssuer().getCode()).expirationTime(exp)
+                .issueTime(iat).audience(aud);
+        JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.ES256)
+                .keyID(keyUtils.GetKey().getKeyID()).build();
+        SignedJWT signedJWT = new SignedJWT(header, claimsSet.build());
+        JWSSigner signer = new ECDSASigner(keyUtils.GetKey());
+        signedJWT.sign(signer);
+        String jwt = signedJWT.serialize();
+        return jwt;
+    }
+
+    public String createPermitQrCode() {
         return "";
     }
 
-    public String CreatePermitJws() {
+    public String createPermitJws() {
         return "";
     }
 
-    public String CreatePermitRevokeJws() {
+    public String createPermitRevokeJws() {
         return "";
     }
 
-    public String CreatePermitUsedJws() {
+    public String createPermitUsedJws() {
         return "";
     }
 
-    public Boolean ValidatePermitQrCode() {
+    public Boolean validatePermitQrCode() {
         return false;
     }
 
-    public Boolean ValidatePermitJws() {
+    public Boolean validatePermitJws() {
         return false;
     }
 
-    public Boolean ValidatePermitRevokeJws() {
+    public Boolean validatePermitRevokeJws() {
         return false;
     }
 
-    public Boolean ValidatePermitUsedJws() {
+    public Boolean validatePermitUsedJws() {
         return false;
     }
 
-    public Boolean ValidatePermitId() {
+    public Boolean validatePermitId() {
         return false;
     }
 
-    
+
     /*
      * private ECKey ecKey;
      * 

@@ -6,7 +6,7 @@ Hibernate
 PostgreSql
 Graylog
 
-TR-UA-2021-12582
+TR-UA-2021-1-12582
 
 ## Generating key
 

@@ -34,6 +34,9 @@ public class IssuedCredential {
     @Column(name = "jws", nullable = false, length=5000)
     private String jws;
 
+    @Column(name = "aud", nullable = false, length=3)
+    private String aud;
+
     @Column(name = "pid", nullable = false)
     private int pid;
 

@@ -7,9 +7,8 @@ import epermit.common.CommandResult;
 public interface CredentialService {
     Page<CredentialDto> getAll(Pageable pageable);
     CredentialDto getById(long id);
-    CredentialDto getByQrCode(String qrCode);
     CredentialDto getBySerialNumber(String serialNumber);
-    CommandResult create(); // from issuer
-    CommandResult delete(long id); // from issuer
     CommandResult setUsed(long id);
+    //CommandResult create(String jwt); // from issuer
+    //CommandResult delete(String serialNumber, String jwt); // from issuer
 }

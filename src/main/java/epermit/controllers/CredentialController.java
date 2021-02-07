@@ -1,6 +1,5 @@
 package epermit.controllers;
 
-import org.springframework.boot.autoconfigure.security.saml2.Saml2RelyingPartyProperties.Registration.Signing.Credential;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -41,7 +40,7 @@ public class CredentialController {
     }
 
     // from issuer
-    @PostMapping()
+    /*@PostMapping()
     public CommandResult post(Long id) {
         return CommandResult.success();
     }
@@ -50,6 +49,6 @@ public class CredentialController {
     @DeleteMapping("/{id}")
     public CommandResult delete(Long id) {
         return CommandResult.success();
-    }
+    }*/
 
 }

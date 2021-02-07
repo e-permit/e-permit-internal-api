@@ -8,8 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 @Repository
 public interface IssuedCredentialRepository extends JpaRepository<IssuedCredential, Long> {
-     Optional<IssuedCredential> findOneByQrCode(String qrCode);
-
      Optional<IssuedCredential> findOneBySerialNumber(String serialNumber);
 
      Optional<IssuedCredential> findFirstByOrderByPidDesc();

@@ -35,6 +35,11 @@ public class IssuedCredentialController {
         return credentialService.getById(id);
     }
 
+    @GetMapping("/find/{serialNumber}")
+    public IssuedCredentialDto getBySerialNumber(String serialNumber) {
+        return credentialService.getBySerialNumber(serialNumber);
+    }
+
     @PostMapping()
     public CommandResult post(@RequestBody CreateIssuedCredentialInput input) {
         return credentialService.create(input);
@@ -51,9 +56,9 @@ public class IssuedCredentialController {
     }
 
     // from verifier
-    @PatchMapping("/{id}/setused")
+    /*@PatchMapping("/{id}/setused")
     public CommandResult setUsed(Long id) {
-        return credentialService.setUsed(id);
-    }
+        return credentialService.setUsed(id, "");
+    }*/
     
 }

@@ -24,5 +24,10 @@ public class CommandResult {
         return CommandResult.builder().isSucceed(true).build();
     }
 
+    public static CommandResult fail(String errorCode, String errorMessage) {
+        return CommandResult.builder().isSucceed(false).resultCode(errorCode)
+                .resultMessage(errorMessage).build();
+    }
+
     // private T result; usage: CommandResult.<T>builder()
 }
