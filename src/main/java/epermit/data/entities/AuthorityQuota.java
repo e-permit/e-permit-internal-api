@@ -30,23 +30,26 @@ public class AuthorityQuota {
     @Column(name = "permit_type", nullable = false)
     private int permitType;
 
-    @Column(name = "direction", nullable = false)
-    private int direction;
+    @Column(name = "vehicle_owner", nullable = false)
+    private boolean vehicleOwner;
 
-    @Column(name = "start_id", nullable = false)
-    private int startId;
+    @Column(name = "start_number", nullable = false)
+    private int startNumber;
 
-    @Column(name = "end_id", nullable = false)
-    private int endId;
+    @Column(name = "end_number", nullable = false)
+    private int endNumber;
+
+    @Column(name = "current_number", nullable = false)
+    private int currentNumber;
     
     @Column(name = "created_at", nullable = false)
     private Date createdAt;
 
-    @Column(name = "disabled", nullable = true)
-    private Boolean disabled;
+    @Column(name = "active", nullable = false)
+    private boolean active;
 
-    @Column(name = "disabled_at", nullable = true)
-    private Date disabledAt;
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted;
 
     @ManyToOne
     @JoinColumn(name = "authority_id") 

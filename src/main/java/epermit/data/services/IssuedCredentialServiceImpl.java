@@ -4,35 +4,27 @@ import java.util.Date;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 import epermit.common.CommandResult;
 import epermit.core.issuedcredentials.*;
-import epermit.data.entities.Authority;
 import epermit.data.entities.IssuedCredential;
-import epermit.data.repositories.AuthorityRepository;
 import epermit.data.repositories.IssuedCredentialRepository;
+import epermit.data.utils.CredentialUtils;
 import lombok.SneakyThrows;
 
 @Component
 public class IssuedCredentialServiceImpl implements IssuedCredentialService {
 
     private final IssuedCredentialRepository repository;
-    private final AuthorityRepository authorityRepository;
+    private final CredentialUtils credentialUtils;
     private final ModelMapper modelMapper;
-    private final RestTemplate restTemplate;
 
     public IssuedCredentialServiceImpl(IssuedCredentialRepository repository,
-            ModelMapper modelMapper, RestTemplate restTemplate,
-            AuthorityRepository authorityRepository) {
+            ModelMapper modelMapper, CredentialUtils credentialUtils) {
         this.repository = repository;
         this.modelMapper = modelMapper;
-        this.restTemplate = restTemplate;
-        this.authorityRepository = authorityRepository;
+        this.credentialUtils = credentialUtils;
     }
 
     @Override
@@ -58,16 +50,14 @@ public class IssuedCredentialServiceImpl implements IssuedCredentialService {
     @Override
     @Transactional
     public CommandResult create(CreateIssuedCredentialInput input) {
-        Authority authority = authorityRepository.findByCode(input.getAud());
-        // Optional<IssuedCredential> lastCr = repository.findFirstByRevokedTrue();
-        // authority.getQuotas().stream().filter(x-> x.getYear() == input.getPy() &&
-        // x.getDirection() == 1);
-        // find all credential
-        // generate a pid for cred
-        // generate qr code
-        // generate cred jws
-        // delete if revoked exists
-        // send to verifier
+        int pid = credentialUtils.getPermitId(input.getAud(), input.getPy(), input.getPt());
+        String qrCode = credentialUtils.createPermitQrCode(input, pid);
+        String jws = credentialUtils.createPermitJws(input, pid);
+        IssuedCredential cred = new IssuedCredential();
+        cred.setAud(input.getAud());
+        cred.setJws(qrCode);
+        cred.setJws(jws);
+        repository.save(cred);
         CommandResult result = CommandResult.success();
         return result;
     }
@@ -76,11 +66,7 @@ public class IssuedCredentialServiceImpl implements IssuedCredentialService {
     @Transactional
     public CommandResult send(long id) {
         IssuedCredential cred = repository.findById(id).get();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> request = new HttpEntity<String>(cred.getJws(), headers);
-        Authority authority = authorityRepository.findByCode(cred.getAud());
-        restTemplate.postForEntity(authority.getUri(), request, Boolean.class);
+        credentialUtils.sendMesaage(cred.getAud(), cred.getJws());
         cred.setUsed(true);
         repository.save(cred);
         return CommandResult.success();
@@ -90,11 +76,8 @@ public class IssuedCredentialServiceImpl implements IssuedCredentialService {
     @Transactional
     public CommandResult revoke(long id) {
         IssuedCredential cred = repository.findById(id).get();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> request = new HttpEntity<String>("", headers);
-        Authority authority = authorityRepository.findByCode(cred.getAud());
-        restTemplate.postForEntity(authority.getUri(), request, Boolean.class);
+        String jwt = credentialUtils.createMessageJws(cred.getAud(),  null);
+        credentialUtils.sendMesaage(cred.getAud(), jwt);
         cred.setRevoked(true);
         cred.setRevokedAt(new Date());
         repository.save(cred);

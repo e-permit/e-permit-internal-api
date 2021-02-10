@@ -1,20 +1,25 @@
 package epermit.data.utils;
 
 import java.time.Instant;
-import java.time.temporal.ChronoUnit; 
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.Map;
 import java.util.Optional;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.crypto.ECDSASigner;
-import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 import epermit.config.EPermitProperties;
-import epermit.core.issuedcredentials.IssuedCredentialService;
+import epermit.core.issuedcredentials.CreateIssuedCredentialInput;
 import epermit.data.entities.Authority;
+import epermit.data.entities.AuthorityQuota;
 import epermit.data.entities.IssuedCredential;
 import epermit.data.repositories.AuthorityRepository;
 import epermit.data.repositories.IssuedCredentialRepository;
@@ -27,34 +32,50 @@ public class CredentialUtils {
     private final IssuedCredentialRepository issuedCredentialRepository;
     private final KeyUtils keyUtils;
     private final EPermitProperties props;
+    private final RestTemplate restTemplate;
 
     public CredentialUtils(AuthorityRepository authorityRepository,
             IssuedCredentialRepository issuedCredentialRepository, KeyUtils keyUtils,
-            EPermitProperties props) {
+            EPermitProperties props, RestTemplate restTemplate) {
         this.authorityRepository = authorityRepository;
         this.keyUtils = keyUtils;
         this.issuedCredentialRepository = issuedCredentialRepository;
+        this.restTemplate = restTemplate;
         this.props = props;
     }
 
     public Integer getPermitId(String aud, int py, int pt) {
         Authority authority = authorityRepository.findByCode(aud);
-        Optional<IssuedCredential> lastCr = issuedCredentialRepository.findFirstByRevokedTrue();
-        authority.getQuotas().stream()
-                .filter(x -> x.getYear() == py && x.getPermitType() == pt && x.getDirection() == 1);
+        Optional<IssuedCredential> revokedCred =
+                issuedCredentialRepository.findFirstByRevokedTrue();
+        if (revokedCred.isPresent()) {
+            int nextPid = revokedCred.get().getPid();
+            issuedCredentialRepository.delete(revokedCred.get());
+            return nextPid;
+        }
 
+        Optional<AuthorityQuota> quotaResult =
+                authority.getQuotas().stream().filter(x -> x.getYear() == py && x.isActive()
+                        && x.getPermitType() == pt && x.isVehicleOwner()).findFirst();
+        if (quotaResult.isPresent()) {
+            AuthorityQuota quota = quotaResult.get();
+            int nextPid = quota.getCurrentNumber() + 1;
+            quota.setCurrentNumber(nextPid);
+            if (quota.getCurrentNumber() == quota.getEndNumber()) {
+                quota.setActive(false);
+            }
+            authorityRepository.save(authority);
+            return nextPid;
+        }
         return null;
     }
 
     @SneakyThrows
-    public String createToken(String aud) {
-        //Instant.now().plus(1, ChronoUnit.YEARS);
-        //Date d = Date.from(Instant.now());
-        //LocalDateTime.now(ZoneOffset.UTC).plusYears(1).plusMonths(1);
-        Date iat = new Date();
-        Date exp = new Date(new Date().getTime() + 60 * 60 * 1000);
-        JWTClaimsSet.Builder claimsSet = new JWTClaimsSet.Builder().issuer(props.getIssuer().getCode()).expirationTime(exp)
-                .issueTime(iat).audience(aud);
+    public String createPermitQrCode(CreateIssuedCredentialInput input, int pid) {
+        JWTClaimsSet.Builder claimsSet =
+                new JWTClaimsSet.Builder().issuer(props.getIssuer().getCode())
+                        .audience(input.getAud()).subject(input.getSub()).claim("py", input.getPy())
+                        .claim("pt", input.getPt()).claim("cn", input.getCn()).claim("pid", pid);
         JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.ES256)
                 .keyID(keyUtils.GetKey().getKeyID()).build();
         SignedJWT signedJWT = new SignedJWT(header, claimsSet.build());
@@ -64,20 +85,55 @@ public class CredentialUtils {
         return jwt;
     }
 
-    public String createPermitQrCode() {
-        return "";
+    @SneakyThrows
+    public String createPermitJws(CreateIssuedCredentialInput input, int pid) {
+        Instant iat = Instant.now();
+        Instant exp = iat.plus(1, ChronoUnit.YEARS);
+        JWTClaimsSet.Builder claimsSet =
+                new JWTClaimsSet.Builder().issuer(props.getIssuer().getCode())
+                        .expirationTime(Date.from(exp)).issueTime(Date.from(iat))
+                        .audience(input.getAud()).subject(input.getSub()).claim("py", input.getPy())
+                        .claim("pt", input.getPt()).claim("cn", input.getCn()).claim("pid", pid);
+        input.getClaims().forEach((k, v) -> {
+            claimsSet.claim(k, v);
+        });
+        JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.ES256)
+                .keyID(keyUtils.GetKey().getKeyID()).build();
+        SignedJWT signedJWT = new SignedJWT(header, claimsSet.build());
+        JWSSigner signer = new ECDSASigner(keyUtils.GetKey());
+        signedJWT.sign(signer);
+        String jwt = signedJWT.serialize();
+        return jwt;
     }
 
-    public String createPermitJws() {
-        return "";
+    @SneakyThrows
+    public String createMessageJws(String aud, Map<String, String> claims) {
+        // LocalDateTime.now(ZoneOffset.UTC).plusYears(1).plusMonths(1);
+        Date iat = new Date();
+        Date exp = new Date(new Date().getTime() + 60 * 60 * 1000);
+        JWTClaimsSet.Builder claimsSet =
+                new JWTClaimsSet.Builder().issuer(props.getIssuer().getCode()).expirationTime(exp)
+                        .issueTime(iat).audience(aud);
+        JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.ES256)
+                .keyID(keyUtils.GetKey().getKeyID()).build();
+        claims.forEach((k, v) -> {
+            claimsSet.claim(k, v);
+        });
+        SignedJWT signedJWT = new SignedJWT(header, claimsSet.build());
+        JWSSigner signer = new ECDSASigner(keyUtils.GetKey());
+        signedJWT.sign(signer);
+        String jwt = signedJWT.serialize();
+        return jwt;
     }
 
-    public String createPermitRevokeJws() {
-        return "";
-    }
-
-    public String createPermitUsedJws() {
-        return "";
+    @SneakyThrows
+    public boolean sendMesaage(String aud, String jwt) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> request = new HttpEntity<String>(jwt, headers);
+        Authority authority = authorityRepository.findByCode(aud);
+        restTemplate.postForEntity(authority.getUri(), request, Boolean.class);
+        return true;
     }
 
     public Boolean validatePermitQrCode() {
@@ -88,18 +144,13 @@ public class CredentialUtils {
         return false;
     }
 
-    public Boolean validatePermitRevokeJws() {
-        return false;
-    }
-
-    public Boolean validatePermitUsedJws() {
+    public Boolean validatePermitMessage() {
         return false;
     }
 
     public Boolean validatePermitId() {
         return false;
     }
-
 
     /*
      * private ECKey ecKey;

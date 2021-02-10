@@ -16,9 +16,9 @@ public class CreateIssuedCredentialInput {
     
     private String cn;
 
-    private String cid;
+    //private String cid;
 
-    private String res;
+    //private String res;
 
     private Map<String, String> claims = new HashMap<>();
 }

@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 import epermit.common.CommandResult;
 import epermit.core.aurthorities.AuthorityDto;
@@ -113,13 +114,10 @@ public class AuthorityServiceImpl implements AuthorityService {
 
     @Override
     @SneakyThrows
+    @Transactional
     public CommandResult revokeQuota(int id) {
-        transactionTemplate.executeWithoutResult(s -> {
-            AuthorityQuota quota = authorityQuotaRepository.getOne(id);
-            quota.setDisabled(true);
-            quota.setDisabledAt(new Date());
-            authorityQuotaRepository.save(quota);
-        });
+        AuthorityQuota quota = authorityQuotaRepository.getOne(id);
+        authorityQuotaRepository.delete(quota);
         return CommandResult.success();
     }
 

@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface IssuedCredentialRepository extends JpaRepository<IssuedCredential, Long> {
      Optional<IssuedCredential> findOneBySerialNumber(String serialNumber);
 
-     Optional<IssuedCredential> findFirstByOrderByPidDesc();
+     Optional<IssuedCredential> findFirstByPtAndPyOrderByPidDesc();
 
      Optional<IssuedCredential> findFirstByRevokedTrue();
 }
