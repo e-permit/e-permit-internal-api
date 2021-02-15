@@ -1,17 +1,11 @@
 package epermit.data.services;
 
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionOperations;
-import org.springframework.transaction.support.TransactionTemplate;
 import epermit.common.CommandResult;
 import epermit.core.keys.*;
 import epermit.data.entities.Key;
@@ -27,14 +21,11 @@ public class KeyServiceImpl implements KeyService {
     private final ModelMapper modelMapper;
     private final KeyRepository repository;
     private final KeyUtils keyUtils;
-    private final TransactionTemplate transactionTemplate;
 
-    public KeyServiceImpl(KeyRepository repository, ModelMapper modelMapper, KeyUtils keyUtils,
-            TransactionTemplate transactionTemplate) {
+    public KeyServiceImpl(KeyRepository repository, ModelMapper modelMapper, KeyUtils keyUtils) {
         this.repository = repository;
         this.modelMapper = modelMapper;
         this.keyUtils = keyUtils;
-        this.transactionTemplate = transactionTemplate;
     }
 
     @Override
@@ -46,27 +37,23 @@ public class KeyServiceImpl implements KeyService {
 
     @Override
     @SneakyThrows
+    @Transactional
     public CommandResult createKey(String kid) {
         Key k = keyUtils.Create(kid);
-        int id = transactionTemplate.execute(status -> {
-            repository.save(k);
-            return k.getId();
-        });
-        
+        repository.save(k);
         return CommandResult.success();
     }
 
     @Override
     @SneakyThrows
+    @Transactional
     public CommandResult enableKey(int id) {
-        transactionTemplate.executeWithoutResult(cx -> {
-            Key oldKey = repository.findOneByEnabledTrue().get();
-            oldKey.setEnabled(false);
-            Key newOne = repository.findById(id).get();
-            newOne.setEnabled(true);
-            repository.save(oldKey);
-            repository.save(newOne);
-        });
+        Key oldKey = repository.findOneByEnabledTrue().get();
+        oldKey.setEnabled(false);
+        Key newOne = repository.findById(id).get();
+        newOne.setEnabled(true);
+        repository.save(oldKey);
+        repository.save(newOne);
         return CommandResult.success();
     }
 

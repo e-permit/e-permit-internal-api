@@ -44,7 +44,7 @@ public class CredentialServiceImpl implements CredentialService {
     }
 
     @Override
-    public CommandResult setUsed(long id) {
+    public CommandResult sendFeedback(long id) {
         Optional<Credential> credResult = repository.findById(id);
         if (!credResult.isPresent()) {
             return CommandResult.fail("CREDENTIAL_NOT_FOUND",

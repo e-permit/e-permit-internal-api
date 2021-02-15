@@ -66,7 +66,7 @@ public class IssuedCredentialServiceImpl implements IssuedCredentialService {
     @Transactional
     public CommandResult send(long id) {
         IssuedCredential cred = repository.findById(id).get();
-        credentialUtils.sendMesaage(cred.getAud(), cred.getJws());
+        //credentialUtils.sendMesaage(cred.getAud(), cred.getJws());
         cred.setUsed(true);
         repository.save(cred);
         return CommandResult.success();
@@ -76,8 +76,11 @@ public class IssuedCredentialServiceImpl implements IssuedCredentialService {
     @Transactional
     public CommandResult revoke(long id) {
         IssuedCredential cred = repository.findById(id).get();
-        String jwt = credentialUtils.createMessageJws(cred.getAud(),  null);
-        credentialUtils.sendMesaage(cred.getAud(), jwt);
+        // String key = "sa";
+        // Make it simple
+        // 
+        //String jwt = credentialUtils.createMessageJws(cred.getAud(),  null);
+        //credentialUtils.sendMesaage(cred.getAud(), jwt);
         cred.setRevoked(true);
         cred.setRevokedAt(new Date());
         repository.save(cred);

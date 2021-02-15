@@ -32,15 +32,13 @@ public class CredentialUtils {
     private final IssuedCredentialRepository issuedCredentialRepository;
     private final KeyUtils keyUtils;
     private final EPermitProperties props;
-    private final RestTemplate restTemplate;
 
     public CredentialUtils(AuthorityRepository authorityRepository,
             IssuedCredentialRepository issuedCredentialRepository, KeyUtils keyUtils,
-            EPermitProperties props, RestTemplate restTemplate) {
+            EPermitProperties props) {
         this.authorityRepository = authorityRepository;
         this.keyUtils = keyUtils;
         this.issuedCredentialRepository = issuedCredentialRepository;
-        this.restTemplate = restTemplate;
         this.props = props;
     }
 
@@ -105,52 +103,7 @@ public class CredentialUtils {
         String jwt = signedJWT.serialize();
         return jwt;
     }
-
-    @SneakyThrows
-    public String createMessageJws(String aud, Map<String, String> claims) {
-        // LocalDateTime.now(ZoneOffset.UTC).plusYears(1).plusMonths(1);
-        Date iat = new Date();
-        Date exp = new Date(new Date().getTime() + 60 * 60 * 1000);
-        JWTClaimsSet.Builder claimsSet =
-                new JWTClaimsSet.Builder().issuer(props.getIssuer().getCode()).expirationTime(exp)
-                        .issueTime(iat).audience(aud);
-        JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.ES256)
-                .keyID(keyUtils.GetKey().getKeyID()).build();
-        claims.forEach((k, v) -> {
-            claimsSet.claim(k, v);
-        });
-        SignedJWT signedJWT = new SignedJWT(header, claimsSet.build());
-        JWSSigner signer = new ECDSASigner(keyUtils.GetKey());
-        signedJWT.sign(signer);
-        String jwt = signedJWT.serialize();
-        return jwt;
-    }
-
-    @SneakyThrows
-    public boolean sendMesaage(String aud, String jwt) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> request = new HttpEntity<String>(jwt, headers);
-        Authority authority = authorityRepository.findByCode(aud);
-        restTemplate.postForEntity(authority.getUri(), request, Boolean.class);
-        return true;
-    }
-
-    public Boolean validatePermitQrCode() {
-        return false;
-    }
-
-    public Boolean validatePermitJws() {
-        return false;
-    }
-
-    public Boolean validatePermitMessage() {
-        return false;
-    }
-
-    public Boolean validatePermitId() {
-        return false;
-    }
+   
 
     /*
      * private ECKey ecKey;
