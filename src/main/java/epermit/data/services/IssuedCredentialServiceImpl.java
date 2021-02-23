@@ -78,7 +78,6 @@ public class IssuedCredentialServiceImpl implements IssuedCredentialService {
         IssuedCredential cred = repository.findById(id).get();
         // String key = "sa";
         // Make it simple
-        // 
         //String jwt = credentialUtils.createMessageJws(cred.getAud(),  null);
         //credentialUtils.sendMesaage(cred.getAud(), jwt);
         cred.setRevoked(true);

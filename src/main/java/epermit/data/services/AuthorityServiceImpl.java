@@ -30,14 +30,12 @@ public class AuthorityServiceImpl implements AuthorityService {
     private final AuthorityKeyRepository authorityKeyRepository;
     private final AuthorityQuotaRepository authorityQuotaRepository;
     private final ModelMapper modelMapper;
-    private final TransactionTemplate transactionTemplate;
 
     public AuthorityServiceImpl(AuthorityRepository authorityRepository, ModelMapper modelMapper,
-            TransactionTemplate transactionTemplate, AuthorityKeyRepository authorityKeyRepository,
+            AuthorityKeyRepository authorityKeyRepository,
             AuthorityQuotaRepository authorityQuotaRepository) {
         this.authorityRepository = authorityRepository;
         this.modelMapper = modelMapper;
-        this.transactionTemplate = transactionTemplate;
         this.authorityKeyRepository = authorityKeyRepository;
         this.authorityQuotaRepository = authorityQuotaRepository;
     }
@@ -60,55 +58,47 @@ public class AuthorityServiceImpl implements AuthorityService {
     @Override
     @SneakyThrows
     public CommandResult create(CreateAuthorityInput input) {
-        transactionTemplate.executeWithoutResult(s -> {
-            Authority authority = new Authority();
-            authority.setCode(input.getCode());
-            authority.setName(input.getName());
-            authority.setUri(input.getUri());
-            authority.setCreatedAt(new Date());
-            authorityRepository.save(authority);
-        });
+        Authority authority = new Authority();
+        authority.setCode(input.getCode());
+        authority.setName(input.getName());
+        authority.setUri(input.getUri());
+        authority.setCreatedAt(new Date());
+        authorityRepository.save(authority);
         return CommandResult.success();
     }
 
     @Override
     @SneakyThrows
     public CommandResult createKey(String code, CreateAuthorityKeyInput input) {
-        transactionTemplate.executeWithoutResult(s -> {
-            Authority authority = authorityRepository.findByCode(code);
-            AuthorityKey key = new AuthorityKey();
-            key.setAuthority(authority);
-            key.setKid(input.getKid());
-            key.setContent(input.getJwk());
-            key.setCreatedAt(new Date());
-            authority.addKey(key);
-            authorityRepository.save(authority);
-        });
-
+        Authority authority = authorityRepository.findByCode(code);
+        AuthorityKey key = new AuthorityKey();
+        key.setAuthority(authority);
+        key.setKid(input.getKid());
+        key.setContent(input.getJwk());
+        key.setCreatedAt(new Date());
+        authority.addKey(key);
+        authorityRepository.save(authority);
         return CommandResult.success();
     }
 
     @Override
     @SneakyThrows
     public CommandResult createQuota(String code, CreateAuthorityQuotaInput input) {
-        transactionTemplate.executeWithoutResult(s -> {
-            Authority authority = authorityRepository.findByCode(code);
-            AuthorityQuota quota = modelMapper.map(input, AuthorityQuota.class);
-            authority.addQuota(quota);
-            authorityRepository.save(authority);
-        });
+        Authority authority = authorityRepository.findByCode(code);
+        AuthorityQuota quota = modelMapper.map(input, AuthorityQuota.class);
+        authority.addQuota(quota);
+        authorityRepository.save(authority);
         return CommandResult.success();
     }
 
     @Override
     @SneakyThrows
+    @Transactional
     public CommandResult revokeKey(int id) {
-        transactionTemplate.executeWithoutResult(s -> {
-            AuthorityKey key = authorityKeyRepository.getOne(id);
-            key.setDisabled(true);
-            key.setDisabledAt(new Date());
-            authorityKeyRepository.save(key);
-        });
+        AuthorityKey key = authorityKeyRepository.getOne(id);
+        key.setDisabled(true);
+        key.setDisabledAt(new Date());
+        authorityKeyRepository.save(key);
         return CommandResult.success();
     }
 
@@ -123,12 +113,11 @@ public class AuthorityServiceImpl implements AuthorityService {
 
     @Override
     @SneakyThrows
+    @Transactional
     public CommandResult setClaimsRule(String code, SetClaimsRuleInput input) {
-        transactionTemplate.executeWithoutResult(s -> {
-            Authority authority = authorityRepository.findByCode(code);
-            authority.setClaimsRule(input.getRule());
-            authorityRepository.save(authority);
-        });
+        Authority authority = authorityRepository.findByCode(code);
+        authority.setClaimsRule(input.getRule());
+        authorityRepository.save(authority);
         return CommandResult.success();
     }
 }

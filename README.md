@@ -16,3 +16,12 @@ core: resource services and dtos
 data -> repositories: in order to access database
 data -> services: convertion entity <-> dto(transactions is private method)
 data -> utils: common helpers
+
+## TO-DO
+
+- Validation of jwt
+- Permit config controller and service impl
+- Integration test for services
+- Public api integration
+- Frontend app integration
+- Offline Verify integration

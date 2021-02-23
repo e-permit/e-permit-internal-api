@@ -1,19 +1,22 @@
 package epermit.data.utils;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.JWSHeader;
-import com.nimbusds.jose.JWSSigner;
-import com.nimbusds.jose.crypto.ECDSASigner;
+import com.nimbusds.jose.*;
+import com.nimbusds.jose.crypto.*;
+import com.nimbusds.jose.jwk.*;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
 import epermit.config.EPermitProperties;
 import epermit.data.entities.Authority;
+import epermit.data.entities.AuthorityKey;
 import epermit.data.repositories.AuthorityRepository;
 import lombok.SneakyThrows;
 
@@ -63,22 +66,43 @@ public class MessageUtils {
     }
 
     public void validateCreateMessage(String jws) {
-
+        // get aud from payload
+        // get authority
+        // 
     }
 
     public void validateRevokeMessage(String jws) {
-
+        // get aud from payload
+        // get authority
+        // 
     }
 
     public void validateFeedbackMessage(String jws) {
-
+        JWSObject jwsObject = JWSObject.parse(jws);
+        JWSHeader header = jwsObject.getHeader();
+        Payload payload = jwsObject.getPayload();
+        String iss = payload.toJSONObject().get("iss").toString();
+        String pmt = payload.toJSONObject().get("pmt").toString();
+        Authority authority = authorityRepository.findByCode(iss);
+                List<AuthorityKey> keys = authority.getKeys();
+                for (int j = 0, size = keys.size(); j < size; j++) {
+                    JSONObject b = keys.getJSONObject(j);
+                    String kid = b.getString("kid");
+                    if (kid.equals(header.getKeyID())) {
+                        jwkStr = b.toString();
+                    }
+                }
+        // payload.toJSONObject().getAsString("iss");
+        ECPublicKey ecPublicKey = ECKey.parse(jwkStr).toECPublicKey();
+        JWSVerifier verifier = new ECDSAVerifier(ecPublicKey);
+        Boolean r = jwsObject.verify(verifier);
+        return r.toString();
+        // get aud from payload
+        // get authority
+        // 
     }
 
-    public void validateQrCode(String jws) {
-
-    }
-
-    public Boolean validatePermitId() {
+    public Boolean validatePermitId(String permitId) {
         return false;
     }
 }
