@@ -105,11 +105,11 @@
             <artifactId>nimbus-jose-jwt</artifactId>
             <version>9.4.1</version>
         </dependency>
-        <!--<dependency>
+        <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20200518</version>
-        </dependency>-->
+        </dependency>
 
     </dependencies>
     <build>

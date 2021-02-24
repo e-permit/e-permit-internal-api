@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionTemplate;
 import epermit.common.CommandResult;
 import epermit.core.aurthorities.AuthorityDto;
 import epermit.core.aurthorities.AuthorityService;
@@ -51,7 +50,7 @@ public class AuthorityServiceImpl implements AuthorityService {
     @Override
     @SneakyThrows
     public AuthorityDto getByCode(String code) {
-        Authority authority = authorityRepository.findByCode(code);
+        Authority authority = authorityRepository.findByCode(code).get();
         return modelMapper.map(authority, AuthorityDto.class);
     }
 
@@ -70,7 +69,7 @@ public class AuthorityServiceImpl implements AuthorityService {
     @Override
     @SneakyThrows
     public CommandResult createKey(String code, CreateAuthorityKeyInput input) {
-        Authority authority = authorityRepository.findByCode(code);
+        Authority authority = authorityRepository.findByCode(code).get();
         AuthorityKey key = new AuthorityKey();
         key.setAuthority(authority);
         key.setKid(input.getKid());
@@ -84,7 +83,7 @@ public class AuthorityServiceImpl implements AuthorityService {
     @Override
     @SneakyThrows
     public CommandResult createQuota(String code, CreateAuthorityQuotaInput input) {
-        Authority authority = authorityRepository.findByCode(code);
+        Authority authority = authorityRepository.findByCode(code).get();
         AuthorityQuota quota = modelMapper.map(input, AuthorityQuota.class);
         authority.addQuota(quota);
         authorityRepository.save(authority);
@@ -115,7 +114,7 @@ public class AuthorityServiceImpl implements AuthorityService {
     @SneakyThrows
     @Transactional
     public CommandResult setClaimsRule(String code, SetClaimsRuleInput input) {
-        Authority authority = authorityRepository.findByCode(code);
+        Authority authority = authorityRepository.findByCode(code).get();
         authority.setClaimsRule(input.getRule());
         authorityRepository.save(authority);
         return CommandResult.success();

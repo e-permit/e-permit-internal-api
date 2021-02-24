@@ -1,15 +1,15 @@
 package epermit.data.utils;
 
+import java.security.interfaces.ECPublicKey;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.*;
 import com.nimbusds.jose.jwk.*;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -60,47 +60,74 @@ public class MessageUtils {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> request = new HttpEntity<String>(jwt, headers);
-        Authority authority = authorityRepository.findByCode(aud);
-        restTemplate.postForEntity(authority.getUri(), request, Boolean.class);
+        Optional<Authority> authority = authorityRepository.findByCode(aud);
+        restTemplate.postForEntity(authority.get().getUri(), request, Boolean.class);
         return true;
     }
 
-    public void validateCreateMessage(String jws) {
-        // get aud from payload
-        // get authority
-        // 
-    }
-
-    public void validateRevokeMessage(String jws) {
-        // get aud from payload
-        // get authority
-        // 
-    }
-
-    public void validateFeedbackMessage(String jws) {
+    @SneakyThrows
+    public JwsValidationResult validateMessageJws(String jws) {
         JWSObject jwsObject = JWSObject.parse(jws);
         JWSHeader header = jwsObject.getHeader();
         Payload payload = jwsObject.getPayload();
         String iss = payload.toJSONObject().get("iss").toString();
-        String pmt = payload.toJSONObject().get("pmt").toString();
-        Authority authority = authorityRepository.findByCode(iss);
-                List<AuthorityKey> keys = authority.getKeys();
-                for (int j = 0, size = keys.size(); j < size; j++) {
-                    JSONObject b = keys.getJSONObject(j);
-                    String kid = b.getString("kid");
-                    if (kid.equals(header.getKeyID())) {
-                        jwkStr = b.toString();
-                    }
-                }
-        // payload.toJSONObject().getAsString("iss");
-        ECPublicKey ecPublicKey = ECKey.parse(jwkStr).toECPublicKey();
+        //String pmt = payload.toJSONObject().get("pmt").toString();
+        Optional<Authority> authority = authorityRepository.findByCode(iss);
+        if(!authority.isPresent()){
+           return JwsValidationResult.fail("ISS_NOTFOUND", "The issuer is not found");
+        }
+        Optional<AuthorityKey> key = authority.get().getKeys().stream()
+                .filter(x -> x.getKid().equals(header.getKeyID())).findFirst();
+
+        ECPublicKey ecPublicKey = ECKey.parse(key.get().getContent()).toECPublicKey();
         JWSVerifier verifier = new ECDSAVerifier(ecPublicKey);
         Boolean r = jwsObject.verify(verifier);
-        return r.toString();
-        // get aud from payload
-        // get authority
-        // 
+        if(!r){
+            return JwsValidationResult.fail("INVALID_SIG", "The signature is invalid");
+        }
+        return JwsValidationResult.success(payload.toJSONObject());
     }
+
+    /*public Integer getPermitId(String aud, int py, int pt) {
+        Optional<Authority> authority = authorityRepository.findByCode(aud);
+        Optional<IssuedCredential> revokedCred =
+                issuedCredentialRepository.findFirstByRevokedTrue();
+        if (revokedCred.isPresent()) {
+            int nextPid = revokedCred.get().getPid();
+            issuedCredentialRepository.delete(revokedCred.get());
+            return nextPid;
+        }
+
+        Optional<AuthorityQuota> quotaResult =
+                authority.get().getQuotas().stream().filter(x -> x.getYear() == py && x.isActive()
+                        && x.getPermitType() == pt && x.isVehicleOwner()).findFirst();
+        if (quotaResult.isPresent()) {
+            AuthorityQuota quota = quotaResult.get();
+            int nextPid = quota.getCurrentNumber() + 1;
+            quota.setCurrentNumber(nextPid);
+            if (quota.getCurrentNumber() == quota.getEndNumber()) {
+                quota.setActive(false);
+            }
+            authorityRepository.save(authority.get());
+            return nextPid;
+        }
+        return null;
+    }
+
+    @SneakyThrows
+    public String createPermitQrCode(CreateIssuedCredentialInput input, int pid) {
+        JWTClaimsSet.Builder claimsSet =
+                new JWTClaimsSet.Builder().issuer(props.getIssuer().getCode())
+                        .audience(input.getAud()).subject(input.getSub()).claim("py", input.getPy())
+                        .claim("pt", input.getPt()).claim("cn", input.getCn()).claim("pid", pid);
+        JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.ES256)
+                .keyID(keyUtils.GetKey().getKeyID()).build();
+        SignedJWT signedJWT = new SignedJWT(header, claimsSet.build());
+        JWSSigner signer = new ECDSASigner(keyUtils.GetKey());
+        signedJWT.sign(signer);
+        String jwt = signedJWT.serialize();
+        return jwt;
+    }*/
 
     public Boolean validatePermitId(String permitId) {
         return false;

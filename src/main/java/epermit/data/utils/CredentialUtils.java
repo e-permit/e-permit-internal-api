@@ -39,7 +39,7 @@ public class CredentialUtils {
     }
 
     public Integer getPermitId(String aud, int py, int pt) {
-        Authority authority = authorityRepository.findByCode(aud);
+        Optional<Authority> authority = authorityRepository.findByCode(aud);
         Optional<IssuedCredential> revokedCred =
                 issuedCredentialRepository.findFirstByRevokedTrue();
         if (revokedCred.isPresent()) {
@@ -49,7 +49,7 @@ public class CredentialUtils {
         }
 
         Optional<AuthorityQuota> quotaResult =
-                authority.getQuotas().stream().filter(x -> x.getYear() == py && x.isActive()
+                authority.get().getQuotas().stream().filter(x -> x.getYear() == py && x.isActive()
                         && x.getPermitType() == pt && x.isVehicleOwner()).findFirst();
         if (quotaResult.isPresent()) {
             AuthorityQuota quota = quotaResult.get();
@@ -58,7 +58,7 @@ public class CredentialUtils {
             if (quota.getCurrentNumber() == quota.getEndNumber()) {
                 quota.setActive(false);
             }
-            authorityRepository.save(authority);
+            authorityRepository.save(authority.get());
             return nextPid;
         }
         return null;
@@ -79,7 +79,7 @@ public class CredentialUtils {
         return jwt;
     }
 
-    @SneakyThrows
+    /*@SneakyThrows
     public String createPermitJws(CreateIssuedCredentialInput input, int pid) {
         Instant iat = Instant.now();
         Instant exp = iat.plus(1, ChronoUnit.YEARS);
@@ -98,7 +98,7 @@ public class CredentialUtils {
         signedJWT.sign(signer);
         String jwt = signedJWT.serialize();
         return jwt;
-    }
+    }*/
    
 
     /*
