@@ -38,17 +38,4 @@ public class CredentialController {
     public CommandResult sendFeedback(Long id) {
         return credentialService.sendFeedback(id);
     }
-
-    // from issuer
-    /*@PostMapping()
-    public CommandResult post(Long id) {
-        return CommandResult.success();
-    }
-
-    // from issuer
-    @DeleteMapping("/{id}")
-    public CommandResult delete(Long id) {
-        return CommandResult.success();
-    }*/
-
 }

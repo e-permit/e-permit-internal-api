@@ -1,12 +1,17 @@
 package epermit.data.utils;
 
 import java.util.Date;
+import java.util.Map;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.JWSSigner;
+import com.nimbusds.jose.crypto.ECDSASigner;
 import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.jwk.KeyUse;
 import com.nimbusds.jose.jwk.gen.ECKeyGenerator;
-
-import org.springframework.data.util.Pair;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 import org.springframework.security.crypto.encrypt.Encryptors;
 import org.springframework.security.crypto.encrypt.TextEncryptor;
 import org.springframework.security.crypto.keygen.KeyGenerators;
@@ -26,7 +31,7 @@ public class KeyUtils {
     }
 
     @SneakyThrows
-    public Key Create(String kid) {
+    public Key create(String kid) {
         final String salt = KeyGenerators.string().generateKey();
         TextEncryptor encryptor = Encryptors.text(props.getKeyPassword(), salt);
         ECKey key = new ECKeyGenerator(Curve.P_256).keyUse(KeyUse.SIGNATURE).keyID(kid).generate();
@@ -41,10 +46,26 @@ public class KeyUtils {
     }
 
     @SneakyThrows
-    public ECKey GetKey(){
+    public ECKey getKey(){
         Key k = repository.findOneByEnabledTrue().get();
         TextEncryptor decryptor = Encryptors.text(props.getKeyPassword(), k.getSalt());
         ECKey key = ECKey.parse(decryptor.decrypt(k.getContent()));
         return key;
+    }
+
+    @SneakyThrows
+    public String createJws(Map<String, Object> claims) {
+        JWTClaimsSet.Builder claimsSet =
+                new JWTClaimsSet.Builder().issuer(props.getIssuer().getCode());
+        JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.ES256)
+                .keyID(getKey().getKeyID()).build();
+        claims.forEach((k, v) -> {
+            claimsSet.claim(k, v);
+        });
+        SignedJWT signedJWT = new SignedJWT(header, claimsSet.build());
+        JWSSigner signer = new ECDSASigner(getKey());
+        signedJWT.sign(signer);
+        String jwt = signedJWT.serialize();
+        return jwt;
     }
 }

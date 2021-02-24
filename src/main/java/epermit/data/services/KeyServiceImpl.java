@@ -39,7 +39,7 @@ public class KeyServiceImpl implements KeyService {
     @SneakyThrows
     @Transactional
     public CommandResult createKey(String kid) {
-        Key k = keyUtils.Create(kid);
+        Key k = keyUtils.create(kid);
         repository.save(k);
         return CommandResult.success();
     }

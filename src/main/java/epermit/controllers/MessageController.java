@@ -8,18 +8,8 @@ import epermit.common.CommandResult;
 @RestController
 @RequestMapping("/messages")
 public class MessageController {
-    @PostMapping("/created")
+    @PostMapping("/")
     public CommandResult create() {
-        return CommandResult.success();
-    }
-
-    @PostMapping("/processed")
-    public CommandResult process() {
-        return CommandResult.success();
-    }
-
-    @PostMapping("/deleted")
-    public CommandResult delete() {
         return CommandResult.success();
     }
 }
