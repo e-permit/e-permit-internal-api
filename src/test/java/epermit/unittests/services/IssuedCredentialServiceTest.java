@@ -55,7 +55,7 @@ public class IssuedCredentialServiceTest {
         Pageable pageable = PageRequest.of(1, 10, Sort.by("id").descending());
         Page<IssuedCredential> foundPage = new PageImpl<>(crList, pageable, (long)20);
         when(repository.findAll(ArgumentMatchers.any(Pageable.class))).thenReturn(foundPage);
-        IssuedCredentialServiceImpl service = new IssuedCredentialServiceImpl(repository, new ModelMapper());
+        IssuedCredentialServiceImpl service = new IssuedCredentialServiceImpl(repository, new ModelMapper(), null, null, null);
         Page<epermit.core.issuedcredentials.IssuedCredentialDto> r = service.getAll(pageable);
         assertEquals(r.getContent().size(), 10);
         assertEquals(r.getTotalElements(), 20);

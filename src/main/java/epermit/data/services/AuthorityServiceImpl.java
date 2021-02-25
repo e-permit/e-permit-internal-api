@@ -55,6 +55,7 @@ public class AuthorityServiceImpl implements AuthorityService {
     }
 
     @Override
+    @Transactional
     @SneakyThrows
     public CommandResult create(CreateAuthorityInput input) {
         Authority authority = new Authority();
@@ -67,6 +68,7 @@ public class AuthorityServiceImpl implements AuthorityService {
     }
 
     @Override
+    @Transactional
     @SneakyThrows
     public CommandResult createKey(String code, CreateAuthorityKeyInput input) {
         Authority authority = authorityRepository.findByCode(code).get();
@@ -81,6 +83,7 @@ public class AuthorityServiceImpl implements AuthorityService {
     }
 
     @Override
+    @Transactional
     @SneakyThrows
     public CommandResult createQuota(String code, CreateAuthorityQuotaInput input) {
         Authority authority = authorityRepository.findByCode(code).get();

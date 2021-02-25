@@ -42,7 +42,7 @@ public class AuthorityServiceTest {
 		a.setId(12);
 		authorities.add(a);
 		when(repository.findAll()).thenReturn(authorities);
-		AuthorityServiceImpl service = new AuthorityServiceImpl(repository, mapper, template, keyRepository, quotaRepository);
+		AuthorityServiceImpl service = new AuthorityServiceImpl(repository, mapper, keyRepository, quotaRepository);
 		assertEquals(service.getAll().size(), 1);
 		Mockito.verify(repository, Mockito.times(1)).findAll();
 	}

@@ -5,24 +5,30 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionTemplate;
 import epermit.common.CommandResult;
 import epermit.core.credentials.CredentialDto;
 import epermit.core.credentials.CredentialService;
 import epermit.data.entities.Credential;
 import epermit.data.repositories.CredentialRepository;
+import epermit.data.utils.CredentialUtils;
+import epermit.data.utils.KeyUtils;
+import epermit.data.utils.MessageUtils;
 import lombok.SneakyThrows;
 
 public class CredentialServiceImpl implements CredentialService {
     private final CredentialRepository repository;
     private final ModelMapper modelMapper;
-    private final TransactionTemplate transactionTemplate;
+    private final MessageUtils messageUtils;
+    private final CredentialUtils credentialUtils;
+    private final KeyUtils keyUtils;
 
     public CredentialServiceImpl(CredentialRepository repository, ModelMapper modelMapper,
-            TransactionTemplate transactionTemplate) {
+            CredentialUtils credentialUtils, MessageUtils messageUtils, KeyUtils keyUtils) {
         this.repository = repository;
         this.modelMapper = modelMapper;
-        this.transactionTemplate = transactionTemplate;
+        this.messageUtils = messageUtils;
+        this.credentialUtils = credentialUtils;
+        this.keyUtils = keyUtils;
     }
 
     @Override
@@ -44,40 +50,23 @@ public class CredentialServiceImpl implements CredentialService {
     }
 
     @Override
+    @Transactional
     public CommandResult sendFeedback(long id) {
         Optional<Credential> credResult = repository.findById(id);
         if (!credResult.isPresent()) {
             return CommandResult.fail("CREDENTIAL_NOT_FOUND",
                     "Not found credential for id: " + Long.toString(id));
         }
-        transactionTemplate.executeWithoutResult(action->{
-            Credential cred = credResult.get();
+        Credential cred = credResult.get();
+        String jws = keyUtils.createJws(credentialUtils.getFeedbackClaims(cred));
+        boolean isSucceed = messageUtils.sendMesaage(cred.getIss(), jws);
+        if (isSucceed) {
             cred.setUsed(true);
             repository.save(cred);
-        });
-        return CommandResult.success();
-    }
-
-    /*@Override
-    public CommandResult create(String jwt) {
-        // validate jwt
-        // validate info
-        // create
-        return CommandResult.success();
-    }*/
-
-    /*@Override
-    public CommandResult delete(String serialNumber, String jwt) {
-        // validate jwt and info
-        Optional<Credential> credResult = repository.findOneBySerialNumber(serialNumber);
-        if (!credResult.isPresent()) {
-            return CommandResult.fail("CREDENTIAL_NOT_FOUND",
-                    "Not found credential for serial number: " + serialNumber);
+            return CommandResult.success();
+        } else {
+            return CommandResult.fail("MESSAGE_SEND_FAILURE",
+                    "Couldn't send credential. Credential id: " + Long.toString(id));
         }
-        transactionTemplate.executeWithoutResult(action->{
-            Credential cred = credResult.get();
-            repository.delete(cred);
-        });
-        return CommandResult.success();
-    }*/
+    }
 }

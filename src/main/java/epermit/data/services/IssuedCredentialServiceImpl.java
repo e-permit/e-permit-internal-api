@@ -13,6 +13,7 @@ import epermit.data.entities.IssuedCredential;
 import epermit.data.repositories.IssuedCredentialRepository;
 import epermit.data.utils.CredentialUtils;
 import epermit.data.utils.KeyUtils;
+import epermit.data.utils.MessageUtils;
 import lombok.SneakyThrows;
 
 @Component
@@ -22,13 +23,16 @@ public class IssuedCredentialServiceImpl implements IssuedCredentialService {
     private final CredentialUtils credentialUtils;
     private final KeyUtils keyUtils;
     private final ModelMapper modelMapper;
+    private final MessageUtils messageUtils;
 
     public IssuedCredentialServiceImpl(IssuedCredentialRepository repository,
-            ModelMapper modelMapper, CredentialUtils credentialUtils, KeyUtils keyUtils) {
+            ModelMapper modelMapper, MessageUtils messageUtils, CredentialUtils credentialUtils,
+            KeyUtils keyUtils) {
         this.repository = repository;
         this.modelMapper = modelMapper;
         this.credentialUtils = credentialUtils;
         this.keyUtils = keyUtils;
+        this.messageUtils = messageUtils;
     }
 
     @Override
@@ -55,7 +59,7 @@ public class IssuedCredentialServiceImpl implements IssuedCredentialService {
     @Transactional
     public CommandResult create(CreateIssuedCredentialInput input) {
         int pid = credentialUtils.getPermitId(input.getAud(), input.getPy(), input.getPt());
-        Map<String, Object> qrCodeClaims  = credentialUtils.getPermitQrCodeClaims(input, pid);
+        Map<String, Object> qrCodeClaims = credentialUtils.getPermitQrCodeClaims(input, pid);
         Map<String, Object> claims = credentialUtils.getPermitClaims(input, pid);
         String jws = keyUtils.createJws(claims);
         String qrCode = keyUtils.createJws(qrCodeClaims);
@@ -72,26 +76,32 @@ public class IssuedCredentialServiceImpl implements IssuedCredentialService {
     @Transactional
     public CommandResult send(long id) {
         IssuedCredential cred = repository.findById(id).get();
-        //credentialUtils.sendMesaage(cred.getAud(), cred.getJws());
-        cred.setUsed(true);
-        repository.save(cred);
-        return CommandResult.success();
+        boolean isSucceed = messageUtils.sendMesaage(cred.getAud(), cred.getJws());
+        if (isSucceed) {
+            cred.setUsed(true);
+            repository.save(cred);
+            return CommandResult.success();
+        } else {
+            return CommandResult.fail("MESSAGE_SEND_FAILURE",
+                    "Couldn't send credential. Credential id: " + Long.toString(id));
+        }
     }
 
     @Override
     @Transactional
     public CommandResult revoke(long id) {
         IssuedCredential cred = repository.findById(id).get();
-        
-        cred.setRevoked(true);
-        cred.setRevokedAt(new Date());
-        repository.save(cred);
-        return CommandResult.success();
+        String jws = keyUtils.createJws(credentialUtils.getRevokeClaims(cred));
+        boolean isSucceed = messageUtils.sendMesaage(cred.getAud(), jws);
+        if (isSucceed) {
+            cred.setRevoked(true);
+            cred.setRevokedAt(new Date());
+            repository.save(cred);
+            return CommandResult.success();
+        } else {
+            return CommandResult.fail("MESSAGE_SEND_FAILURE",
+                    "Couldn't send credential. Credential id: " + Long.toString(id));
+        }
     }
-
-    /*
-     * @Override public CommandResult setUsed(long id, String jwt) { // validate jwt // set used to
-     * true return CommandResult.success(); }
-     */
 
 }

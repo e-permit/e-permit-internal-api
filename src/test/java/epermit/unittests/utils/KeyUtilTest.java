@@ -1,19 +1,29 @@
 package epermit.unittests.utils;
 
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
+import java.security.interfaces.ECPublicKey;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.JWSObject;
+import com.nimbusds.jose.JWSVerifier;
+import com.nimbusds.jose.crypto.ECDSAVerifier;
 import com.nimbusds.jose.jwk.ECKey;
-
+import com.nimbusds.jose.shaded.json.parser.ParseException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.util.Pair;
 import epermit.config.EPermitProperties;
+import epermit.config.EPermitProperties.Issuer;
 import epermit.data.entities.Key;
 import epermit.data.repositories.KeyRepository;
 import epermit.data.utils.KeyUtils;
+import lombok.SneakyThrows;
 
 @ExtendWith(MockitoExtension.class)
 public class KeyUtilTest {
@@ -22,11 +32,12 @@ public class KeyUtilTest {
 
     @Mock
     KeyRepository repository;
+
     @Test
     void keyShouldBeCreatedWhenSaltAndPasswordIsCorrect() {
         when(properties.getKeyPassword()).thenReturn("123456");
         KeyUtils utils = new KeyUtils(properties, repository);
-        Key key = utils.Create("1");
+        Key key = utils.create("1");
         Assertions.assertNotNull(key.getSalt());
     }
 
@@ -35,22 +46,32 @@ public class KeyUtilTest {
         when(properties.getKeyPassword()).thenReturn("123456");
         Assertions.assertThrows(IllegalStateException.class, () -> {
             KeyUtils utils = new KeyUtils(properties, repository);
-            Key k = utils.Create("1");
-            when(repository.findOneByEnabledTrue().get()).thenReturn(k);
+            Key k = utils.create("1");
+            when(repository.findOneByEnabledTrue()).thenReturn(Optional.of(k));
             when(properties.getKeyPassword()).thenReturn("1234567");
-            ECKey key = utils.GetKey();
+            ECKey key = utils.getKey();
         });
     }
 
     @Test
-    void keyShouldNotBeCreatedWhenSaltIsIncorrect() {
+    @SneakyThrows
+    void createJwsShouldWork() {
+        KeyUtils utils = new KeyUtils(properties, repository);
         when(properties.getKeyPassword()).thenReturn("123456");
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            KeyUtils utils = new KeyUtils(properties, repository);
-            Key k = utils.Create("1");
-            k.setSalt("123");
-            when(repository.findOneByEnabledTrue().get()).thenReturn(k);
-            ECKey key = utils.GetKey();
-        });
+        Issuer issuer = new Issuer();
+        issuer.setCode("TR");
+        when(properties.getIssuer()).thenReturn(issuer);
+        Key k = utils.create("1");
+        when(repository.findOneByEnabledTrue()).thenReturn(Optional.of(k));
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("aud", "UA");
+        String jws = utils.createJws(claims);
+        JWSObject jwsObject = JWSObject.parse(jws);
+        Map<String, Object> resolvedClaims = jwsObject.getPayload().toJSONObject();
+        ECPublicKey ecPublicKey = ECKey.parse(utils.getKey().toJSONString()).toECPublicKey();
+        JWSVerifier verifier = new ECDSAVerifier(ecPublicKey);
+        assertEquals(true, jwsObject.verify(verifier));
+        assertEquals("TR", resolvedClaims.get("iss").toString());
+        assertEquals("UA", resolvedClaims.get("aud").toString());
     }
 }

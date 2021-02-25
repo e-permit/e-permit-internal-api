@@ -34,7 +34,7 @@ public class KeyServiceImplIT {
     
     @Test
     public void greetingShouldReturnDefaultMessage() {   
-        keyServiceImpl.CreateKey("1");
+        keyServiceImpl.createKey("1");
         assertEquals(keyServiceImpl.getKeys().size(), 1); 
         //keyServiceImpl.CreateKey("2");   
     }

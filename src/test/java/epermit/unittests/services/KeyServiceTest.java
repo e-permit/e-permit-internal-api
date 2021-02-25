@@ -33,20 +33,20 @@ public class KeyServiceTest {
     public void shouldGetEnabledKey() {
         when(properties.getKeyPassword()).thenReturn("123456");
         KeyUtils utils = new KeyUtils(properties, null);
-        Key key = utils.Create("1");
+        Key key = utils.create("1");
         when(repository.save(key)).thenReturn(key);
-        KeyServiceImpl service = new KeyServiceImpl(repository, mapper, utils, template);
-        Assertions.assertNotNull(service.EnableKey(key.getId()));
+        KeyServiceImpl service = new KeyServiceImpl(repository, mapper, utils);
+        Assertions.assertNotNull(service.enableKey(key.getId()));
     }
 
     @Test
     public void shouldCreateKey() {
         when(properties.getKeyPassword()).thenReturn("123456");
         KeyUtils utils = new KeyUtils(properties, null);
-        Key key =utils.Create("1"); 
+        Key key =utils.create("1"); 
         when(repository.findOneByEnabledTrue().get()).thenReturn(key);
-        KeyServiceImpl service = new KeyServiceImpl(repository, mapper, utils, template);
-        CommandResult r = service.CreateKey("1");
+        KeyServiceImpl service = new KeyServiceImpl(repository, mapper, utils);
+        CommandResult r = service.createKey("1");
         Assertions.assertNotNull(r.getProps().get("key_id"));
     }
 

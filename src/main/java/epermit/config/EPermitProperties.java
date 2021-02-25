@@ -19,6 +19,7 @@ public class EPermitProperties {
     private Issuer issuer;
 
     @Getter
+    @Setter
     public static class Issuer {
         private String code;
 

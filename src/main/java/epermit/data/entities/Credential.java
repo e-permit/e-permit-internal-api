@@ -7,7 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,6 +16,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor // JPA
 @Entity
 @Table(name = "credentials")
+@SQLDelete(sql = "UPDATE issued_credentials SET deleted = true WHERE id = ?")
+@Where(clause = "deleted = false")
 public class Credential {
     @Id
     @GeneratedValue
@@ -44,6 +47,9 @@ public class Credential {
     @Column(name = "exp", nullable = false)
     private long exp;
 
+    @Column(name = "iss", nullable = false)
+    private String iss;
+
     @Column(name = "sub", nullable = false)
     private String sub;
 
@@ -61,4 +67,7 @@ public class Credential {
 
     @Column(name = "is_usage_delivered", nullable = false)
     private boolean isUsageDelivered;
+
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted;
 }

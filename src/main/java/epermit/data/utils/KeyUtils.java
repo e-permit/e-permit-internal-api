@@ -55,15 +55,16 @@ public class KeyUtils {
 
     @SneakyThrows
     public String createJws(Map<String, Object> claims) {
+        ECKey key = getKey();
         JWTClaimsSet.Builder claimsSet =
                 new JWTClaimsSet.Builder().issuer(props.getIssuer().getCode());
         JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.ES256)
-                .keyID(getKey().getKeyID()).build();
+                .keyID(key.getKeyID()).build();
         claims.forEach((k, v) -> {
             claimsSet.claim(k, v);
         });
         SignedJWT signedJWT = new SignedJWT(header, claimsSet.build());
-        JWSSigner signer = new ECDSASigner(getKey());
+        JWSSigner signer = new ECDSASigner(key);
         signedJWT.sign(signer);
         String jwt = signedJWT.serialize();
         return jwt;
