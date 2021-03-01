@@ -51,14 +51,15 @@ public class CredentialServiceImpl implements CredentialService {
 
     @Override
     @Transactional
-    public CommandResult sendFeedback(long id) {
+    public CommandResult setUsed(long id) {
         Optional<Credential> credResult = repository.findById(id);
         if (!credResult.isPresent()) {
             return CommandResult.fail("CREDENTIAL_NOT_FOUND",
                     "Not found credential for id: " + Long.toString(id));
         }
         Credential cred = credResult.get();
-        String jws = keyUtils.createJws(credentialUtils.getFeedbackClaims(cred));
+        return CommandResult.success();
+        /*String jws = keyUtils.createJws(credentialUtils.getFeedbackClaims(cred));
         boolean isSucceed = messageUtils.sendMesaage(cred.getIss(), jws);
         if (isSucceed) {
             cred.setUsed(true);
@@ -67,6 +68,6 @@ public class CredentialServiceImpl implements CredentialService {
         } else {
             return CommandResult.fail("MESSAGE_SEND_FAILURE",
                     "Couldn't send credential. Credential id: " + Long.toString(id));
-        }
+        }*/
     }
 }

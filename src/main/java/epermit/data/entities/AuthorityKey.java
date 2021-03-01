@@ -1,6 +1,6 @@
 package epermit.data.entities;
 
-import java.util.Date;
+import java.time.OffsetDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,13 +29,13 @@ public class AuthorityKey {
     private String kid;
     
     @Column(name = "created_at", nullable = false)
-    private Date createdAt;
+    private OffsetDateTime createdAt;
 
     @Column(name = "disabled", nullable = true)
     private Boolean disabled;
 
     @Column(name = "disabled_at", nullable = true)
-    private Date disabledAt;
+    private OffsetDateTime disabledAt;
 
     @Column(name = "content", nullable = false, length=5000)
     private String content;

@@ -39,7 +39,6 @@ public class IssuedCredentialServiceIT {
     void pagingShouldRun(){
         for (long i = 0; i < 30; i++) {
             IssuedCredential cr = new IssuedCredential();
-            cr.setCid("123456");
             cr.setClaims("claims");
             cr.setExp((long) 123);
             cr.setIat((long) 123);

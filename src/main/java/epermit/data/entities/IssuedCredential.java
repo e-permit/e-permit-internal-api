@@ -1,7 +1,6 @@
 package epermit.data.entities;
 
-import java.util.Date;
-
+import java.time.OffsetDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -30,9 +29,6 @@ public class IssuedCredential {
 
     @Column(name = "qrcode", nullable = false, length=1000)
     private String qrcode;
-    
-    @Column(name = "jws", nullable = false, length=5000)
-    private String jws;
 
     @Column(name = "aud", nullable = false, length=3)
     private String aud;
@@ -55,23 +51,23 @@ public class IssuedCredential {
     @Column(name = "sub", nullable = false)
     private String sub;
 
-    @Column(name = "cid", nullable = false)
-    private String cid;
+    @Column(name = "cn", nullable = false)
+    private String cn;
 
     @Column(name = "claims", nullable = false, length=1000)
     private String claims;
 
-    @Column(name = "is_used", nullable = false)
-    private boolean isUsed;
+    @Column(name = "used", nullable = false)
+    private boolean used;
 
     @Column(name = "used_at", nullable = true)
-    private Date usedAt;
+    private OffsetDateTime usedAt;
 
     @Column(name = "revoked", nullable = false)
     private boolean revoked;
 
     @Column(name = "revoked_at", nullable = true)
-    private Date revokedAt;
+    private OffsetDateTime revokedAt;
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted;

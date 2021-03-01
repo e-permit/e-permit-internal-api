@@ -10,7 +10,7 @@ public interface IssuedCredentialService {
     IssuedCredentialDto getById(long id);
     IssuedCredentialDto getBySerialNumber(String serialNumber);
     CommandResult create(CreateIssuedCredentialInput input);
-    CommandResult send(long id);
+    //CommandResult send(long id);
     CommandResult revoke(long id);
     //CommandResult setUsed(long id, String jwt); // from verifier
 }

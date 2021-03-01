@@ -37,7 +37,6 @@ public class IssuedCredentialServiceTest {
         for (long i = 0; i < 10; i++) {
             IssuedCredential cr = new IssuedCredential();
             cr.setId(i);
-            cr.setCid("123456");
             cr.setClaims("claims");
             cr.setExp((long) 123);
             cr.setIat((long) 123);

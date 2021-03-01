@@ -1,6 +1,6 @@
 package epermit.data.entities;
 
-import java.util.Date;
+import java.time.OffsetDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import epermit.common.PermitType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -18,8 +19,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor // JPA
 @Entity
-@Table(name = "authority_quotas")
-public class AuthorityQuota {
+@Table(name = "verifier_quotas")
+public class VerifierQuota {
     @Id
     @GeneratedValue
     private int id;
@@ -28,25 +29,16 @@ public class AuthorityQuota {
     private int year;
 
     @Column(name = "permit_type", nullable = false)
-    private int permitType;
-
-    @Column(name = "vehicle_owner", nullable = false)
-    private boolean vehicleOwner;
+    private PermitType permitType;
 
     @Column(name = "start_number", nullable = false)
     private int startNumber;
 
     @Column(name = "end_number", nullable = false)
     private int endNumber;
-
-    @Column(name = "current_number", nullable = false)
-    private int currentNumber;
     
     @Column(name = "created_at", nullable = false)
-    private Date createdAt;
-
-    @Column(name = "active", nullable = false)
-    private boolean active;
+    private OffsetDateTime createdAt;
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted;

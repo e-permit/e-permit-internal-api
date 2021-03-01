@@ -1,7 +1,7 @@
 package epermit.integrationtests.rest;
 
 
-import java.util.Date;
+import java.time.OffsetDateTime;
 
 import org.junit.Rule;
 import org.junit.jupiter.api.Test;
@@ -60,7 +60,7 @@ public class AuthorityRestIT {
     public void greetingShouldReturnDefaultMessage() throws Exception {
         Authority a = new Authority();
         a.setCode("tr");
-        a.setCreatedAt(new Date());
+        a.setCreatedAt(OffsetDateTime.now());
         a.setName("name");
         a.setUri("permitUri");
         authorityRepository.save(a);

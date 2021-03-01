@@ -22,6 +22,7 @@ public class AuthorityDto {
 
   private List<AuthorityKeyDto> keys = new ArrayList<>();
 
-  private List<AuthorityQuotaDto> quotas = new ArrayList<>();
+  private List<AuthorityQuotaDto> authorityQuotas = new ArrayList<>();
 
+  private List<IssuerQuotaDto> issuerQuotas = new ArrayList<>();
 }

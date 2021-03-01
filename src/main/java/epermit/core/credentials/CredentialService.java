@@ -8,7 +8,7 @@ public interface CredentialService {
     Page<CredentialDto> getAll(Pageable pageable);
     CredentialDto getById(long id);
     CredentialDto getBySerialNumber(String serialNumber);
-    CommandResult sendFeedback(long id);
+    CommandResult setUsed(long id);
     //CommandResult create(String jwt); // from issuer
     //CommandResult delete(String serialNumber, String jwt); // from issuer
 }

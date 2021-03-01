@@ -1,6 +1,6 @@
 package epermit.data.entities;
 
-import java.util.Date;
+import java.time.OffsetDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,7 +29,7 @@ public class Key {
     private String kid;
     
     @Column(name = "created_at", nullable = false)
-    private Date createdAt;
+    private OffsetDateTime createdAt;
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;

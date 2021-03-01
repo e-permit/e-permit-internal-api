@@ -1,7 +1,7 @@
 package epermit.core.issuedcredentials;
 
 import java.util.Date;
-
+import epermit.common.PermitType;
 import lombok.Data;
 
 @Data
@@ -11,12 +11,10 @@ public class IssuedCredentialDto {
     private String serialNumber;
 
     private String qrcode;
-    
-    private String jws;
 
     private int pid;
 
-    private int pt;
+    private PermitType pt;
 
     private int py;
 
@@ -26,11 +24,11 @@ public class IssuedCredentialDto {
 
     private String sub;
 
-    private String cid;
+    private String cn;
 
     private String claims;
 
-    private boolean isUsed;
+    private boolean used;
 
     private Date usedAt;
 

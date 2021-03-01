@@ -34,8 +34,8 @@ public class CredentialController {
         return credentialService.getById(id);
     }
 
-    @PatchMapping("/{id}/feedback")
-    public CommandResult sendFeedback(Long id) {
-        return credentialService.sendFeedback(id);
+    @PatchMapping("/{id}/used")
+    public CommandResult setUsed(Long id) {
+        return credentialService.setUsed(id);
     }
 }

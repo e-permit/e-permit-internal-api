@@ -1,18 +1,16 @@
 package epermit.data.utils;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.StringJoiner;
 import org.springframework.stereotype.Component;
+import epermit.common.PermitType;
 import epermit.config.EPermitProperties;
 import epermit.core.issuedcredentials.CreateIssuedCredentialInput;
 import epermit.data.entities.Authority;
-import epermit.data.entities.AuthorityQuota;
-import epermit.data.entities.Credential;
 import epermit.data.entities.IssuedCredential;
+import epermit.data.entities.IssuerQuota;
 import epermit.data.repositories.AuthorityRepository;
 import epermit.data.repositories.IssuedCredentialRepository;
 
@@ -30,7 +28,7 @@ public class CredentialUtils {
         this.props = props;
     }
 
-    public Integer getPermitId(String aud, int py, int pt) {
+    public Integer getPermitId(String aud, int py, PermitType pt) {
         Optional<Authority> authority = authorityRepository.findByCode(aud);
         Optional<IssuedCredential> revokedCred =
                 issuedCredentialRepository.findFirstByRevokedTrue();
@@ -40,11 +38,11 @@ public class CredentialUtils {
             return nextPid;
         }
 
-        Optional<AuthorityQuota> quotaResult =
-                authority.get().getQuotas().stream().filter(x -> x.getYear() == py && x.isActive()
-                        && x.getPermitType() == pt && x.isVehicleOwner()).findFirst();
+        Optional<IssuerQuota> quotaResult = authority.get().getIssuerQuotas().stream()
+                .filter(x -> x.getYear() == py && x.isActive() && x.getPermitType() == pt)
+                .findFirst();
         if (quotaResult.isPresent()) {
-            AuthorityQuota quota = quotaResult.get();
+            IssuerQuota quota = quotaResult.get();
             int nextPid = quota.getCurrentNumber() + 1;
             quota.setCurrentNumber(nextPid);
             if (quota.getCurrentNumber() == quota.getEndNumber()) {
@@ -58,16 +56,25 @@ public class CredentialUtils {
 
     public Map<String, Object> getPermitQrCodeClaims(CreateIssuedCredentialInput input, int pid) {
         Map<String, Object> claims = new HashMap<>();
-        // claims.put("aud", input.getAud());
-        claims.put("sub", input.getSub());
-        claims.put("pt", input.getPt());
-        claims.put("py", input.getPy());
+        claims.put("sub", input.getPlateNumber());
+        claims.put("pt", input.getPermitType().getCode());
+        claims.put("py", input.getPermitYear());
         claims.put("pid", pid);
-        claims.put("cn", input.getCn());
+        claims.put("cn", input.getCompanyName());
         return claims;
     }
 
-    public Map<String, Object> getPermitClaims(CreateIssuedCredentialInput input, int pid) {
+    public String getSerialNumber(String aud, PermitType pt, Integer py, long pid) {
+        StringJoiner joiner = new StringJoiner("-");
+        String serialNumber =
+                joiner.add(props.getIssuer().getCode()).add(aud).add(Integer.toString(py))
+                        .add(Integer.toString(pt.getCode())).add(Long.toString(pid)).toString();
+        return serialNumber;
+    }
+    
+    
+    
+    /*public Map<String, Object> getPermitClaims(CreateIssuedCredentialInput input, int pid) {
         Map<String, Object> claims = new HashMap<>();
         Instant iat = Instant.now();
         Instant exp = iat.plus(1, ChronoUnit.YEARS);
@@ -80,7 +87,7 @@ public class CredentialUtils {
         claims.put("py", input.getPy());
         claims.put("pid", pid);
         claims.put("cn", input.getCn());
-        claims.put("serial_number", getSerialNumber(input));
+        claims.put("serial_number", getSerialNumber(input, pid));
         input.getClaims().forEach((k, v) -> {
             claims.put(k, v);
         });
@@ -101,21 +108,13 @@ public class CredentialUtils {
 
     public Map<String, Object> getFeedbackClaims(Credential cred) {
         Map<String, Object> claims = new HashMap<>();
-        Instant iat = Instant.now();
-        Instant exp = iat.plus(1, ChronoUnit.YEARS);
+        ZonedDateTime iat = ZonedDateTime.now(ZoneOffset.UTC);
+        ZonedDateTime exp = iat.plusYears(1);
         claims.put("pmt", 3);
         claims.put("aud", cred.getIss());
-        claims.put("iat", iat);
-        claims.put("exp", exp);
+        claims.put("iat", iat.toEpochSecond());
+        claims.put("exp", exp.toEpochSecond());
         claims.put("serial_number", cred.getSerialNumber());
         return claims;
-    }
-
-    public String getSerialNumber(CreateIssuedCredentialInput input){
-        StringJoiner joiner = new StringJoiner("-");
-        String serialNumber = joiner.add(props.getIssuer().getCode()).add(input.getAud())
-                .add(Integer.toString(input.getPy())).add(Integer.toString(input.getPt()))
-                .toString();
-        return serialNumber;
-    }
+    }*/
 }

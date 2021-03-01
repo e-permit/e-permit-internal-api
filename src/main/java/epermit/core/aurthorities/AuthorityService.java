@@ -13,11 +13,15 @@ public interface AuthorityService {
 
     CommandResult createKey(String code, CreateAuthorityKeyInput input);
 
-    CommandResult createQuota(String code, CreateAuthorityQuotaInput input);
-
     CommandResult revokeKey(int id);
 
-    CommandResult revokeQuota(int id);
+    CommandResult createAuthorityQuota(String code, CreateAuthorityQuotaInput input);
+
+    CommandResult revokeAuthorityQuota(int id);
+ 
+    CommandResult createIssuerQuota(String code, CreateIssuerQuotaInput input);
+
+    CommandResult revokeIssuerQuota(int id);
 
     CommandResult setClaimsRule(String code, SetClaimsRuleInput input);
 }

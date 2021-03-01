@@ -2,23 +2,20 @@ package epermit.core.issuedcredentials;
 
 import java.util.HashMap;
 import java.util.Map;
+import epermit.common.PermitType;
 import lombok.Data;
 
 @Data
 public class CreateIssuedCredentialInput {
-    private String aud;
+    private String issuedFor;
 
-    private int pt;
+    private PermitType permitType;
 
-    private int py;
+    private int permitYear;
 
-    private String sub;
+    private String plateNumber;
     
-    private String cn;
+    private String companyName;
 
-    //private String cid;
-
-    //private String res;
-
-    private Map<String, String> claims = new HashMap<>();
+    private Map<String, Object> claims = new HashMap<>();
 }

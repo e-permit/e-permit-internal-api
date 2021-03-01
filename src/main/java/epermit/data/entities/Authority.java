@@ -1,7 +1,7 @@
 package epermit.data.entities;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -38,7 +38,7 @@ public class Authority {
   private String claimsRule;
 
   @Column(name = "created_at", nullable = true)
-  private Date createdAt;
+  private OffsetDateTime createdAt;
   
   @OneToMany(cascade = CascadeType.ALL)
   @EqualsAndHashCode.Exclude
@@ -52,11 +52,21 @@ public class Authority {
 
   @OneToMany(cascade = CascadeType.ALL)
   @EqualsAndHashCode.Exclude
-  private List<AuthorityQuota> quotas = new ArrayList<>();
+  private List<VerifierQuota> verifierQuotas = new ArrayList<>();
 
   @JsonIgnore
-  public void addQuota(AuthorityQuota quota) {
-    quotas.add(quota);
+  public void addAuthorityQuota(VerifierQuota verifierQuota) {
+    verifierQuotas.add(verifierQuota);
+    verifierQuota.setAuthority(this);
+  }
+
+  @OneToMany(cascade = CascadeType.ALL)
+  @EqualsAndHashCode.Exclude
+  private List<IssuerQuota> issuerQuotas = new ArrayList<>();
+
+  @JsonIgnore
+  public void addIssuerQuota(IssuerQuota quota) {
+    issuerQuotas.add(quota);
     quota.setAuthority(this);
   }
  

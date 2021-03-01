@@ -8,8 +8,6 @@ public class CreateAuthorityQuotaInput {
 
     private int permitType;
 
-    private int direction;
-
     private int startId;
 
     private int endId;

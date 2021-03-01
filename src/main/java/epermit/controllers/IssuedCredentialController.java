@@ -45,10 +45,10 @@ public class IssuedCredentialController {
         return credentialService.create(input);
     }
 
-    @PatchMapping("/{id}/send")
+    /*@PatchMapping("/{id}/send")
     public CommandResult send(Long id) {
         return credentialService.send(id);
-    }
+    }*/
 
     @PatchMapping("/{id}/revoke")
     public CommandResult revoke(Long id) {
