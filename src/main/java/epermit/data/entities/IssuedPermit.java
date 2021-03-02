@@ -16,10 +16,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor // JPA
 @Entity
-@Table(name = "issued_credentials")
-@SQLDelete(sql = "UPDATE issued_credentials SET deleted = true WHERE id = ?")
+@Table(name = "issued_permits")
+@SQLDelete(sql = "UPDATE issued_permits SET deleted = true WHERE id = ?")
 @Where(clause = "deleted = false")
-public class IssuedCredential {
+public class IssuedPermit {
     @Id
     @GeneratedValue
     private Long id;
@@ -30,7 +30,7 @@ public class IssuedCredential {
     @Column(name = "qrcode", nullable = false, length=1000)
     private String qrcode;
 
-    @Column(name = "aud", nullable = false, length=3)
+    @Column(name = "aud", nullable = false)
     private String aud;
 
     @Column(name = "pid", nullable = false)

@@ -35,7 +35,7 @@ public class AuthorityServiceTest {
 
 	ModelMapper mapper = new ModelMapper();
 
-	@Test
+	/*@Test
 	public void xTest() {
 		List<Authority> authorities = new ArrayList<>();
 		Authority a = new Authority();
@@ -45,5 +45,5 @@ public class AuthorityServiceTest {
 		AuthorityServiceImpl service = new AuthorityServiceImpl(repository, mapper, keyRepository, quotaRepository);
 		assertEquals(service.getAll().size(), 1);
 		Mockito.verify(repository, Mockito.times(1)).findAll();
-	}
+	}*/
 }

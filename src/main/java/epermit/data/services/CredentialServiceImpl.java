@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import epermit.common.CommandResult;
 import epermit.core.credentials.CredentialDto;
 import epermit.core.credentials.CredentialService;
-import epermit.data.entities.Credential;
+import epermit.data.entities.Permit;
 import epermit.data.repositories.CredentialRepository;
 import epermit.data.utils.CredentialUtils;
 import epermit.data.utils.KeyUtils;
@@ -34,7 +34,7 @@ public class CredentialServiceImpl implements CredentialService {
     @Override
     @SneakyThrows
     public Page<CredentialDto> getAll(Pageable pageable) {
-        Page<epermit.data.entities.Credential> entities = repository.findAll(pageable);
+        Page<epermit.data.entities.Permit> entities = repository.findAll(pageable);
         Page<CredentialDto> dtoPage = entities.map(x -> modelMapper.map(x, CredentialDto.class));
         return dtoPage;
     }
@@ -52,12 +52,12 @@ public class CredentialServiceImpl implements CredentialService {
     @Override
     @Transactional
     public CommandResult setUsed(long id) {
-        Optional<Credential> credResult = repository.findById(id);
+        Optional<Permit> credResult = repository.findById(id);
         if (!credResult.isPresent()) {
             return CommandResult.fail("CREDENTIAL_NOT_FOUND",
                     "Not found credential for id: " + Long.toString(id));
         }
-        Credential cred = credResult.get();
+        Permit cred = credResult.get();
         return CommandResult.success();
         /*String jws = keyUtils.createJws(credentialUtils.getFeedbackClaims(cred));
         boolean isSucceed = messageUtils.sendMesaage(cred.getIss(), jws);

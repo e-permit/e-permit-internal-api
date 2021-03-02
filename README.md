@@ -6,7 +6,18 @@ Hibernate
 PostgreSql
 Graylog
 
+B T 3RD
 TR-UA-2021-1-12582
+
+## Flow
+
+- TR creates a key and expose with e-permit-configuration/jwks.json(same for UA)
+- TR creates an authority(UA) (code, title, uri, verify-uri) (same for UA)
+- TR API gets UA jwks from uri(same for UA)
+- TR creates a issuer quota and send it to UA 
+- UA approves the quota 
+- TR creates a permit and send it to UA(qr code verify-uri/jwt)
+- 
 
 ## Generating key
 

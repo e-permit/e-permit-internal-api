@@ -9,7 +9,7 @@ import epermit.common.PermitType;
 import epermit.config.EPermitProperties;
 import epermit.core.issuedcredentials.CreateIssuedCredentialInput;
 import epermit.data.entities.Authority;
-import epermit.data.entities.IssuedCredential;
+import epermit.data.entities.IssuedPermit;
 import epermit.data.entities.IssuerQuota;
 import epermit.data.repositories.AuthorityRepository;
 import epermit.data.repositories.IssuedCredentialRepository;
@@ -30,7 +30,7 @@ public class CredentialUtils {
 
     public Integer getPermitId(String aud, int py, PermitType pt) {
         Optional<Authority> authority = authorityRepository.findByCode(aud);
-        Optional<IssuedCredential> revokedCred =
+        Optional<IssuedPermit> revokedCred =
                 issuedCredentialRepository.findFirstByRevokedTrue();
         if (revokedCred.isPresent()) {
             int nextPid = revokedCred.get().getPid();

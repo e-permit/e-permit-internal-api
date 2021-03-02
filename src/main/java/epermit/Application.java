@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.EventListener;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+
 //@SpringBootApplication(scanBasePackages = { "epermit" })
 @SpringBootApplication
 @EnableAutoConfiguration(exclude = { ErrorMvcAutoConfiguration.class })

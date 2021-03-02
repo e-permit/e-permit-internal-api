@@ -62,8 +62,7 @@ public class KeyUtilTest {
         Key k = utils.create("1");
         when(repository.findOneByEnabledTrue()).thenReturn(Optional.of(k));
         Map<String, Object> claims = new HashMap<>();
-        claims.put("aud", "UA");
-        String jws = utils.createJws(claims);
+        String jws = utils.createJwt("UA", claims);
         JWSObject jwsObject = JWSObject.parse(jws);
         Map<String, Object> resolvedClaims = jwsObject.getPayload().toJSONObject();
         ECPublicKey ecPublicKey = ECKey.parse(utils.getKey().toJSONString()).toECPublicKey();

@@ -16,12 +16,12 @@ import epermit.core.issuedcredentials.IssuedCredentialDto;
 import epermit.core.issuedcredentials.IssuedCredentialService;
 
 @RestController
-@RequestMapping("/issued_credentials")
-public class IssuedCredentialController {
+@RequestMapping("/issued_permits")
+public class IssuedPermitController {
 
     private final IssuedCredentialService credentialService;
 
-    public IssuedCredentialController(IssuedCredentialService credentialService) {
+    public IssuedPermitController(IssuedCredentialService credentialService) {
         this.credentialService = credentialService;
     }
 

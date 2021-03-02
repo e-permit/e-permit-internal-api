@@ -12,7 +12,7 @@ import epermit.common.CommandResult;
 import epermit.core.issuedcredentials.*;
 import epermit.core.messages.MessageType;
 import epermit.core.messages.types.CreatePermitMessage;
-import epermit.data.entities.IssuedCredential;
+import epermit.data.entities.IssuedPermit;
 import epermit.data.repositories.IssuedCredentialRepository;
 import epermit.data.utils.CredentialUtils;
 import epermit.data.utils.KeyUtils;
@@ -39,7 +39,7 @@ public class IssuedCredentialServiceImpl implements IssuedCredentialService {
     @Override
     @SneakyThrows
     public Page<IssuedCredentialDto> getAll(Pageable pageable) {
-        Page<epermit.data.entities.IssuedCredential> entities = repository.findAll(pageable);
+        Page<epermit.data.entities.IssuedPermit> entities = repository.findAll(pageable);
         Page<IssuedCredentialDto> dtoPage =
                 entities.map(x -> modelMapper.map(x, IssuedCredentialDto.class));
         return dtoPage;
@@ -63,7 +63,7 @@ public class IssuedCredentialServiceImpl implements IssuedCredentialService {
         Map<String, Object> qrCodeClaims = credentialUtils.getPermitQrCodeClaims(input, pid);
         // Map<String, Object> claims = credentialUtils.getPermitClaims(input, pid);
         String qrCode = keyUtils.createJwt(input.getIssuedFor(), qrCodeClaims);
-        IssuedCredential cred = new IssuedCredential();
+        IssuedPermit cred = new IssuedPermit();
         cred.setAud(input.getIssuedFor());
         cred.setQrcode(qrCode);
         repository.save(cred);
@@ -90,7 +90,7 @@ public class IssuedCredentialServiceImpl implements IssuedCredentialService {
     @Override
     @Transactional
     public CommandResult revoke(long id) {
-        IssuedCredential cred = repository.findById(id).get();
+        IssuedPermit cred = repository.findById(id).get();
         // create event
         cred.setRevoked(true);
         cred.setRevokedAt(OffsetDateTime.now());

@@ -2,15 +2,15 @@ package epermit.data.repositories;
 
 
 import org.springframework.stereotype.Repository;
-import epermit.data.entities.IssuedCredential;
+import epermit.data.entities.IssuedPermit;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 @Repository
-public interface IssuedCredentialRepository extends JpaRepository<IssuedCredential, Long> {
-     Optional<IssuedCredential> findOneBySerialNumber(String serialNumber);
+public interface IssuedCredentialRepository extends JpaRepository<IssuedPermit, Long> {
+     Optional<IssuedPermit> findOneBySerialNumber(String serialNumber);
 
-     Optional<IssuedCredential> findFirstByPtAndPyOrderByPidDesc();
+     Optional<IssuedPermit> findFirstByPtAndPyOrderByPidDesc();
 
-     Optional<IssuedCredential> findFirstByRevokedTrue();
+     Optional<IssuedPermit> findFirstByRevokedTrue();
 }

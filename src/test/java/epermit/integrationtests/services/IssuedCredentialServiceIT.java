@@ -17,7 +17,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import epermit.common.CustomPostgresContainer;
-import epermit.data.entities.IssuedCredential;
+import epermit.data.entities.IssuedPermit;
 import epermit.data.repositories.IssuedCredentialRepository;
 import epermit.data.services.IssuedCredentialServiceImpl;
 
@@ -38,11 +38,11 @@ public class IssuedCredentialServiceIT {
     @Test
     void pagingShouldRun(){
         for (long i = 0; i < 30; i++) {
-            IssuedCredential cr = new IssuedCredential();
+            IssuedPermit cr = new IssuedPermit();
             cr.setClaims("claims");
             cr.setExp((long) 123);
             cr.setIat((long) 123);
-            cr.setJws("claims");
+            //cr.setJws("claims");
             cr.setPid(123);
             cr.setPt(1);
             cr.setPy(2021);

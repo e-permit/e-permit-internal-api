@@ -5,11 +5,11 @@ import java.util.List;
 import epermit.common.CommandResult;
 
 public interface AuthorityService {
-    List<AuthorityDto> getAll();
+    //List<AuthorityDto> getAll();
 
-    AuthorityDto getByCode(String code);
+    //AuthorityDto getByCode(String code);
 
-    CommandResult create(CreateAuthorityInput input);
+    /*CommandResult create(CreateAuthorityInput input);
 
     CommandResult createKey(String code, CreateAuthorityKeyInput input);
 
@@ -23,5 +23,5 @@ public interface AuthorityService {
 
     CommandResult revokeIssuerQuota(int id);
 
-    CommandResult setClaimsRule(String code, SetClaimsRuleInput input);
+    CommandResult setClaimsRule(String code, SetClaimsRuleInput input);*/
 }

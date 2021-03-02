@@ -45,7 +45,7 @@ public class AuthorityServiceImpl implements AuthorityService {
         this.issuerQuotaRepository = issuerQuotaRepository;
     }
 
-    @Override
+    /*@Override
     @SneakyThrows
     public List<AuthorityDto> getAll() {
         List<epermit.data.entities.Authority> all = authorityRepository.findAll();
@@ -86,9 +86,8 @@ public class AuthorityServiceImpl implements AuthorityService {
         authority.addKey(key);
         authorityRepository.save(authority);
         return CommandResult.success();
-    }
+    }*/
 
-    @Override
     @SneakyThrows
     @Transactional
     public CommandResult revokeKey(int id) {
@@ -99,18 +98,9 @@ public class AuthorityServiceImpl implements AuthorityService {
         return CommandResult.success();
     }
 
-    @Override
-    @SneakyThrows
-    @Transactional
-    public CommandResult setClaimsRule(String code, SetClaimsRuleInput input) {
-        Authority authority = authorityRepository.findByCode(code).get();
-        authority.setClaimsRule(input.getRule());
-        authorityRepository.save(authority);
-        return CommandResult.success();
-    }
 
 
-    @Override
+
     @Transactional
     @SneakyThrows
     public CommandResult createAuthorityQuota(String code, CreateAuthorityQuotaInput input) {
@@ -121,7 +111,6 @@ public class AuthorityServiceImpl implements AuthorityService {
         return CommandResult.success();
     }
 
-    @Override
     @SneakyThrows
     @Transactional
     public CommandResult revokeAuthorityQuota(int id) {
@@ -129,8 +118,6 @@ public class AuthorityServiceImpl implements AuthorityService {
         authorityQuotaRepository.delete(quota);
         return CommandResult.success();
     }
-
-    @Override
     @Transactional
     @SneakyThrows
     public CommandResult createIssuerQuota(String code, CreateIssuerQuotaInput input) {
@@ -141,7 +128,6 @@ public class AuthorityServiceImpl implements AuthorityService {
         return CommandResult.success();
     }
 
-    @Override
     @Transactional
     @SneakyThrows
     public CommandResult revokeIssuerQuota(int id) {

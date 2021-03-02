@@ -33,13 +33,7 @@ public class ReceivedMessage {
 
     @Column(name = "proof", nullable = false, length=500)
     private String proof;
-    
-    @Column(name = "handled", nullable = false)
-    private Boolean handled;
 
     @Column(name = "created_at", nullable = false)
     private OffsetDateTime createdAt;
-
-    @Column(name = "handled_at", nullable = false)
-    private OffsetDateTime handledAt;
 }

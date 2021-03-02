@@ -15,10 +15,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor // JPA
 @Entity
-@Table(name = "credentials")
-@SQLDelete(sql = "UPDATE issued_credentials SET deleted = true WHERE id = ?")
+@Table(name = "permits")
+@SQLDelete(sql = "UPDATE permits SET deleted = true WHERE id = ?")
 @Where(clause = "deleted = false")
-public class Credential {
+public class Permit {
     @Id
     @GeneratedValue
     private Long id;

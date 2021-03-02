@@ -15,12 +15,12 @@ import epermit.core.credentials.CredentialDto;
 import epermit.core.credentials.CredentialService;
 
 @RestController
-@RequestMapping("/credentials")
-public class CredentialController {
+@RequestMapping("/permits")
+public class PermitController {
 
     private final CredentialService credentialService;
 
-    public CredentialController(CredentialService credentialService) {
+    public PermitController(CredentialService credentialService) {
         this.credentialService = credentialService;
     }
 

@@ -28,8 +28,8 @@ public class ReceivedMessageTask {
              messages.forEach(m -> {
                   boolean handled = handlerMap.get(m.getMessageType().name()).execute(m.getId());
                   if(handled){
-                      m.setHandled(true);
-                      m.setHandledAt(OffsetDateTime.now());
+                      //m.setHandled(true);
+                      //m.setHandledAt(OffsetDateTime.now());
                       repository.save(m);
                   }
              });

@@ -20,7 +20,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import epermit.data.entities.IssuedCredential;
+import epermit.data.entities.IssuedPermit;
 import epermit.data.repositories.IssuedCredentialRepository;
 import epermit.data.services.IssuedCredentialServiceImpl;
 
@@ -33,14 +33,14 @@ public class IssuedCredentialServiceTest {
 
     @Test
     public void greetingShouldReturnMessageFromService() {
-        List<IssuedCredential> crList = new ArrayList<>();
+        List<IssuedPermit> crList = new ArrayList<>();
         for (long i = 0; i < 10; i++) {
-            IssuedCredential cr = new IssuedCredential();
+            IssuedPermit cr = new IssuedPermit();
             cr.setId(i);
             cr.setClaims("claims");
             cr.setExp((long) 123);
             cr.setIat((long) 123);
-            cr.setJws("claims");
+            //cr.setJws("claims");
             cr.setPid(123);
             cr.setPt(1);
             cr.setPy(2021);
@@ -52,7 +52,7 @@ public class IssuedCredentialServiceTest {
             crList.add(cr);
         }
         Pageable pageable = PageRequest.of(1, 10, Sort.by("id").descending());
-        Page<IssuedCredential> foundPage = new PageImpl<>(crList, pageable, (long)20);
+        Page<IssuedPermit> foundPage = new PageImpl<>(crList, pageable, (long)20);
         when(repository.findAll(ArgumentMatchers.any(Pageable.class))).thenReturn(foundPage);
         IssuedCredentialServiceImpl service = new IssuedCredentialServiceImpl(repository, new ModelMapper(), null, null, null);
         Page<epermit.core.issuedcredentials.IssuedCredentialDto> r = service.getAll(pageable);

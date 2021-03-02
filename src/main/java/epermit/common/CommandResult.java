@@ -1,33 +1,33 @@
 package epermit.common;
 
+import java.util.HashMap;
 import java.util.Map;
+import lombok.Data;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Singular;
-
-@Getter
-@Builder
-// @SuperBuilder(toBuilder = true) use @SuperBuilder(toBuilder = true) for child classes
+@Data
 public class CommandResult {
 
-    private final Boolean isSucceed;
+    private Boolean succeed;
 
-    private final String resultCode;
+    private String errorCode;
 
-    private final String resultMessage;
+    private String errorMessage;
 
-    @Singular
-    private Map<String, String> props;
+    private Map<String, String> props = new HashMap<>();
+
+    public void addProp(String key, String value) {
+        props.put(key, value);
+    }
 
     public static CommandResult success() {
-        return CommandResult.builder().isSucceed(true).build();
+        CommandResult cr = new CommandResult();
+        cr.setSucceed(true);
+        return cr;
     }
 
     public static CommandResult fail(String errorCode, String errorMessage) {
-        return CommandResult.builder().isSucceed(false).resultCode(errorCode)
-                .resultMessage(errorMessage).build();
+        CommandResult cr = new CommandResult();
+        cr.setSucceed(false);
+        return cr;
     }
-
-    // private T result; usage: CommandResult.<T>builder()
 }
