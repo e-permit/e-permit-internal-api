@@ -8,8 +8,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import epermit.common.MessageType;
 import epermit.core.messages.CreatedMessageState;
-import epermit.core.messages.MessageType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -32,7 +32,7 @@ public class CreatedMessage {
     @Column(name = "message", nullable = false, length=10000)
     private String message;
 
-    @Column(name = "proof", nullable = false, length=500)
+    @Column(name = "proof", nullable = false, length=5000)
     private String proof;
 
     @Column(name = "created_at", nullable = false)
@@ -41,9 +41,18 @@ public class CreatedMessage {
     @Column(name = "state", nullable = false)
     private CreatedMessageState state;
 
+    @Column(name = "succeed", nullable = false)
+    private Boolean succeed;
+
+    @Column(name = "ack_proof", nullable = false, length=5000)
+    private String ackProof;
+
+    @Column(name = "error_code", nullable = true)
+    private Boolean errorCode;
+
     @Column(name = "locked_at", nullable = false)
     private OffsetDateTime lockedAt;
 
-    @Column(name = "sended_at", nullable = false)
+    @Column(name = "handled_at", nullable = false)
     private OffsetDateTime sendedAt;
 }

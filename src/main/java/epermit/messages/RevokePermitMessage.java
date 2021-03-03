@@ -1,11 +1,12 @@
 package epermit.messages;
 
+import an.awesome.pipelinr.Command;
+import epermit.common.MessageResult;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 @Builder
-public class RevokePermitMessage {
-    private String messageType;
+public class RevokePermitMessage implements Command<MessageResult> {
     private String serialNumber;
 }

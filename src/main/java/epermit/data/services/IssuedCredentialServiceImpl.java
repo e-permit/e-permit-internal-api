@@ -10,8 +10,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import epermit.common.CommandResult;
 import epermit.core.issuedcredentials.*;
-import epermit.core.messages.MessageType;
-import epermit.core.messages.types.CreatePermitMessage;
 import epermit.data.entities.IssuedPermit;
 import epermit.data.repositories.IssuedCredentialRepository;
 import epermit.data.utils.CredentialUtils;
@@ -67,10 +65,10 @@ public class IssuedCredentialServiceImpl implements IssuedCredentialService {
         cred.setAud(input.getIssuedFor());
         cred.setQrcode(qrCode);
         repository.save(cred);
-        CreatePermitMessage message = CreatePermitMessage.builder()
+        /*CreatePermitMessage message = CreatePermitMessage.builder()
                 .companyName(input.getCompanyName()).permitId(pid).messageType(MessageType.CREATE_PERMIT.name())
                 .permitType(input.getPermitType().getStringCode()).permitYear(input.getPermitYear()).serialNumber("")
-                .claims(input.getClaims()).build();
+                .claims(input.getClaims()).build();*/
         CommandResult result = CommandResult.success();
         return result;
     }

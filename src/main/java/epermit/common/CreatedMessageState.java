@@ -1,7 +1,7 @@
 package epermit.common;
 
 public enum CreatedMessageState {
-    NEW(1), LOCKED(2), SENDED(3);
+    NEW(1), LOCKED(2), HANDLED(3);
 
     private Integer code;
 

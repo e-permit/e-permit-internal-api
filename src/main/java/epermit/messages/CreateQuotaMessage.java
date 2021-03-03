@@ -1,5 +1,8 @@
 package epermit.messages;
 
-public class CreateQuotaMessage {
+import an.awesome.pipelinr.Command;
+import epermit.common.MessageResult;
+
+public class CreateQuotaMessage implements Command<MessageResult> {
     
 }

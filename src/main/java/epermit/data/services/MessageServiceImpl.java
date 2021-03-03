@@ -1,13 +1,11 @@
 package epermit.data.services;
 
 import epermit.common.CommandResult;
-import epermit.core.messages.ReceiveMessageInput;
 import epermit.core.messages.CreateMessageInput;
-import epermit.core.messages.MessageService;
 import epermit.data.repositories.ReceivedMessageRepository;
 import lombok.SneakyThrows;
 
-public class MessageServiceImpl implements MessageService {
+/*public class MessageServiceImpl implements MessageService {
     private final ReceivedMessageRepository receivedMessageRepository;
 
     public MessageServiceImpl(ReceivedMessageRepository receivedMessageRepository) {
@@ -38,5 +36,5 @@ public class MessageServiceImpl implements MessageService {
          * messageUtils.handleFeedback(claims); } return CommandResult.fail("INVALID_PMT",
          * "The permit message type is invalid");
          */
-    }
-}
+    /*}
+}*/

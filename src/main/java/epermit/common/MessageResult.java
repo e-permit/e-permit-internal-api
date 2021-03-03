@@ -6,19 +6,17 @@ import lombok.Data;
 public class MessageResult {
     private Boolean succeed;
 
-    private String ackProof;
+    private Boolean handled;
 
     private String errorCode;
 
-    private String errorMessage;
-
-    public static MessageResult success(String ackProof) {
+    public static MessageResult success() {
         MessageResult cr = new MessageResult();
         cr.setSucceed(true);
         return cr;
     }
 
-    public static MessageResult fail(String errorCode, String errorMessage) {
+    public static MessageResult fail(String errorCode) {
         MessageResult cr = new MessageResult();
         cr.setSucceed(false);
         return cr;

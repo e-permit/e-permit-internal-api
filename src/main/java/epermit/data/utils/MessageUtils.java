@@ -1,35 +1,23 @@
 package epermit.data.utils;
 
-import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.Optional;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
-import epermit.common.CommandResult;
 import epermit.data.entities.Authority;
 import epermit.data.entities.VerifierQuota;
-import epermit.data.entities.Permit;
-import epermit.data.entities.IssuedPermit;
 import epermit.data.repositories.AuthorityRepository;
-import epermit.data.repositories.CredentialRepository;
-import epermit.data.repositories.IssuedCredentialRepository;
 import lombok.SneakyThrows;
 
 public class MessageUtils {
     private final RestTemplate restTemplate;
     private final AuthorityRepository authorityRepository;
-    private final IssuedCredentialRepository issuedCredentialRepository;
-    private final CredentialRepository credentialRepository;
 
-    public MessageUtils(RestTemplate restTemplate, AuthorityRepository authorityRepository,
-            IssuedCredentialRepository issuedCredentialRepository,
-            CredentialRepository credentialRepository) {
+    public MessageUtils(RestTemplate restTemplate, AuthorityRepository authorityRepository) {
         this.restTemplate = restTemplate;
         this.authorityRepository = authorityRepository;
-        this.credentialRepository = credentialRepository;
-        this.issuedCredentialRepository = issuedCredentialRepository;
     }
 
     @SneakyThrows
@@ -41,6 +29,7 @@ public class MessageUtils {
         restTemplate.postForEntity(authority.get().getUri(), request, Boolean.class);
         return true;
     }
+
 
     /*public CommandResult handleCreate(Map<String, Object> claims) {
         Optional<Credential> credResult =
