@@ -10,7 +10,7 @@ import epermit.common.CommandResult;
 import epermit.core.keys.*;
 import epermit.data.entities.Key;
 import epermit.data.repositories.KeyRepository;
-import epermit.data.utils.KeyUtils;
+import epermit.data.utils.KeyUtil;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,9 +20,9 @@ public class KeyServiceImpl implements KeyService {
 
     private final ModelMapper modelMapper;
     private final KeyRepository repository;
-    private final KeyUtils keyUtils;
+    private final KeyUtil keyUtils;
 
-    public KeyServiceImpl(KeyRepository repository, ModelMapper modelMapper, KeyUtils keyUtils) {
+    public KeyServiceImpl(KeyRepository repository, ModelMapper modelMapper, KeyUtil keyUtils) {
         this.repository = repository;
         this.modelMapper = modelMapper;
         this.keyUtils = keyUtils;

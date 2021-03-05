@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
-import epermit.core.messages.CreatedMessageState;
+import epermit.common.CreatedMessageState;
 import epermit.data.entities.CreatedMessage;
 import epermit.data.repositories.CreatedMessageRepository;
 
@@ -21,7 +21,7 @@ public class CreatedMessageTask {
 
     @Scheduled(fixedRate = 300 * 1000)
     public void sendMessage() {
-        List<CreatedMessage> entities = tx.execute(state -> {
+        /*List<CreatedMessage> entities = tx.execute(state -> {
             List<CreatedMessage> messages = repository.findFirst10ByState(CreatedMessageState.NEW);
             messages.forEach(message -> {
                 message.setState(CreatedMessageState.LOCKED);
@@ -37,6 +37,6 @@ public class CreatedMessageTask {
                 message.setSendedAt(OffsetDateTime.now());
                 repository.save(message);
             });
-        });
+        });*/
     }
 }

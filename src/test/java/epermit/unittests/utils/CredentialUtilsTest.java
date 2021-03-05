@@ -15,8 +15,8 @@ import epermit.config.EPermitProperties.Issuer;
 import epermit.core.issuedcredentials.CreateIssuedCredentialInput;
 import epermit.data.entities.Permit;
 import epermit.data.repositories.AuthorityRepository;
-import epermit.data.repositories.IssuedCredentialRepository;
-import epermit.data.utils.CredentialUtils;
+import epermit.data.repositories.IssuedPermitRepository;
+import epermit.data.utils.PermitUtil;
 import org.junit.jupiter.api.Test;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,16 +29,16 @@ public class CredentialUtilsTest {
     AuthorityRepository authorityRepository;
 
     @Mock
-    IssuedCredentialRepository issuedCredentialRepository;
+    IssuedPermitRepository issuedCredentialRepository;
 
-    CredentialUtils utils;
+    PermitUtil utils;
 
     @BeforeEach
     public void beforeEach() {
         Issuer issuer = new Issuer();
         issuer.setCode("TR");
         lenient().when(properties.getIssuer()).thenReturn(issuer);
-        utils = new CredentialUtils(authorityRepository, issuedCredentialRepository, properties);
+        utils = new PermitUtil(authorityRepository, issuedCredentialRepository, properties);
     }
 
     @Test

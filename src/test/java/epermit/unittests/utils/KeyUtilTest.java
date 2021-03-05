@@ -20,7 +20,7 @@ import epermit.config.EPermitProperties;
 import epermit.config.EPermitProperties.Issuer;
 import epermit.data.entities.Key;
 import epermit.data.repositories.KeyRepository;
-import epermit.data.utils.KeyUtils;
+import epermit.data.utils.KeyUtil;
 import lombok.SneakyThrows;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,7 +34,7 @@ public class KeyUtilTest {
     @Test
     void keyShouldBeCreatedWhenSaltAndPasswordIsCorrect() {
         when(properties.getKeyPassword()).thenReturn("123456");
-        KeyUtils utils = new KeyUtils(properties, repository);
+        KeyUtil utils = new KeyUtil(properties, repository);
         Key key = utils.create("1");
         Assertions.assertNotNull(key.getSalt());
     }
@@ -43,7 +43,7 @@ public class KeyUtilTest {
     void keyShouldNotBeCreatedWhenPasswordIsIncorrect() {
         when(properties.getKeyPassword()).thenReturn("123456");
         Assertions.assertThrows(IllegalStateException.class, () -> {
-            KeyUtils utils = new KeyUtils(properties, repository);
+            KeyUtil utils = new KeyUtil(properties, repository);
             Key k = utils.create("1");
             when(repository.findOneByEnabledTrue()).thenReturn(Optional.of(k));
             when(properties.getKeyPassword()).thenReturn("1234567");
@@ -54,7 +54,7 @@ public class KeyUtilTest {
     @Test
     @SneakyThrows
     void createJwsShouldWork() {
-        KeyUtils utils = new KeyUtils(properties, repository);
+        KeyUtil utils = new KeyUtil(properties, repository);
         when(properties.getKeyPassword()).thenReturn("123456");
         Issuer issuer = new Issuer();
         issuer.setCode("TR");

@@ -18,7 +18,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import epermit.common.CustomPostgresContainer;
 import epermit.data.entities.IssuedPermit;
-import epermit.data.repositories.IssuedCredentialRepository;
+import epermit.data.repositories.IssuedPermitRepository;
 import epermit.data.services.IssuedCredentialServiceImpl;
 
 
@@ -33,7 +33,7 @@ public class IssuedCredentialServiceIT {
     private IssuedCredentialServiceImpl credentialServiceImpl;
 
     @Autowired
-    private IssuedCredentialRepository credentialRepository;
+    private IssuedPermitRepository credentialRepository;
 
     @Test
     void pagingShouldRun(){

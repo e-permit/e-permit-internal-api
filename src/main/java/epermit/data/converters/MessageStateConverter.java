@@ -3,7 +3,7 @@ package epermit.data.converters;
 import java.util.stream.Stream;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
-import epermit.core.messages.CreatedMessageState;
+import epermit.common.CreatedMessageState;
 
 @Converter(autoApply = true)
 public class MessageStateConverter implements AttributeConverter<CreatedMessageState, Integer> {

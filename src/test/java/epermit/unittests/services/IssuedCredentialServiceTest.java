@@ -21,14 +21,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import epermit.data.entities.IssuedPermit;
-import epermit.data.repositories.IssuedCredentialRepository;
+import epermit.data.repositories.IssuedPermitRepository;
 import epermit.data.services.IssuedCredentialServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 public class IssuedCredentialServiceTest {
 
     @Mock
-    IssuedCredentialRepository repository;
+    IssuedPermitRepository repository;
 
 
     @Test

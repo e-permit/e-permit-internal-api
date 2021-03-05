@@ -12,7 +12,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import epermit.common.CustomPostgresContainer;
 import epermit.data.repositories.KeyRepository;
 import epermit.data.services.KeyServiceImpl;
-import epermit.data.utils.KeyUtils;
+import epermit.data.utils.KeyUtil;
 
 
 @SpringBootTest

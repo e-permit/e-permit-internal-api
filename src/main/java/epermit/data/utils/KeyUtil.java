@@ -23,11 +23,11 @@ import epermit.data.repositories.KeyRepository;
 import lombok.SneakyThrows;
 
 @Component
-public class KeyUtils {
+public class KeyUtil {
     private EPermitProperties props;
     private KeyRepository repository;
 
-    public KeyUtils(EPermitProperties props, KeyRepository repository) {
+    public KeyUtil(EPermitProperties props, KeyRepository repository) {
         this.props = props;
         this.repository = repository;
     }
@@ -55,7 +55,7 @@ public class KeyUtils {
         return key;
     }
 
-    @SneakyThrows
+    /*@SneakyThrows
     public String createJwt(String aud, Map<String, Object> claims) {
         ECKey key = getKey();
         Date iat = new Date();
@@ -70,5 +70,5 @@ public class KeyUtils {
         signedJWT.sign(signer);
         String jwt = signedJWT.serialize();
         return jwt;
-    }
+    }*/
 }

@@ -1,7 +1,6 @@
 package epermit.data.services;
 
 import epermit.common.CommandResult;
-import epermit.core.messages.CreateMessageInput;
 import epermit.data.repositories.ReceivedMessageRepository;
 import lombok.SneakyThrows;
 

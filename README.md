@@ -33,6 +33,7 @@ TR-UA-2021-1-12582
 - Receiver Message Handling: When a message is received 
 - Key rotation 
 - Quota sync 
+- Message Result()
 
 ## TO-DO
 

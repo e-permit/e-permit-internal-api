@@ -11,23 +11,23 @@ import org.springframework.transaction.annotation.Transactional;
 import epermit.common.CommandResult;
 import epermit.core.issuedcredentials.*;
 import epermit.data.entities.IssuedPermit;
-import epermit.data.repositories.IssuedCredentialRepository;
-import epermit.data.utils.CredentialUtils;
-import epermit.data.utils.KeyUtils;
-import epermit.data.utils.MessageUtils;
+import epermit.data.repositories.IssuedPermitRepository;
+import epermit.data.utils.PermitUtil;
+import epermit.data.utils.KeyUtil;
+import epermit.data.utils.MessageUtil;
 import lombok.SneakyThrows;
 
 @Component
 public class IssuedCredentialServiceImpl implements IssuedCredentialService {
 
-    private final IssuedCredentialRepository repository;
-    private final CredentialUtils credentialUtils;
-    private final KeyUtils keyUtils;
+    private final IssuedPermitRepository repository;
+    private final PermitUtil credentialUtils;
+    private final KeyUtil keyUtils;
     private final ModelMapper modelMapper;
 
-    public IssuedCredentialServiceImpl(IssuedCredentialRepository repository,
-            ModelMapper modelMapper, MessageUtils messageUtils, CredentialUtils credentialUtils,
-            KeyUtils keyUtils) {
+    public IssuedCredentialServiceImpl(IssuedPermitRepository repository,
+            ModelMapper modelMapper, MessageUtil messageUtils, PermitUtil credentialUtils,
+            KeyUtil keyUtils) {
         this.repository = repository;
         this.modelMapper = modelMapper;
         this.credentialUtils = credentialUtils;
@@ -57,7 +57,7 @@ public class IssuedCredentialServiceImpl implements IssuedCredentialService {
     @Override
     @Transactional
     public CommandResult create(CreateIssuedCredentialInput input) {
-        int pid = credentialUtils.getPermitId(input.getIssuedFor(), input.getPermitYear(), input.getPermitType());
+        /*int pid = credentialUtils.generatePermitId(input.getIssuedFor(), input.getPermitYear(), input.getPermitType());
         Map<String, Object> qrCodeClaims = credentialUtils.getPermitQrCodeClaims(input, pid);
         // Map<String, Object> claims = credentialUtils.getPermitClaims(input, pid);
         String qrCode = keyUtils.createJwt(input.getIssuedFor(), qrCodeClaims);
@@ -69,6 +69,7 @@ public class IssuedCredentialServiceImpl implements IssuedCredentialService {
                 .companyName(input.getCompanyName()).permitId(pid).messageType(MessageType.CREATE_PERMIT.name())
                 .permitType(input.getPermitType().getStringCode()).permitYear(input.getPermitYear()).serialNumber("")
                 .claims(input.getClaims()).build();*/
+        // create event*/
         CommandResult result = CommandResult.success();
         return result;
     }

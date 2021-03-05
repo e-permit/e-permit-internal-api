@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import an.awesome.pipelinr.Pipeline;
 import epermit.commands.ReceiveMessageCommand;
-import epermit.common.MessageResult;
 
 @RestController
 @RequestMapping("/messages")
@@ -17,7 +16,7 @@ public class MessageController {
         this.pipeline = pipeline;
     }
     @PostMapping()
-    public MessageResult receive(@RequestBody ReceiveMessageCommand command) {
+    public String receive(@RequestBody ReceiveMessageCommand command) {
         return command.execute(pipeline);
     }
 }

@@ -9,21 +9,21 @@ import epermit.common.CommandResult;
 import epermit.core.credentials.CredentialDto;
 import epermit.core.credentials.CredentialService;
 import epermit.data.entities.Permit;
-import epermit.data.repositories.CredentialRepository;
-import epermit.data.utils.CredentialUtils;
-import epermit.data.utils.KeyUtils;
-import epermit.data.utils.MessageUtils;
+import epermit.data.repositories.PermitRepository;
+import epermit.data.utils.PermitUtil;
+import epermit.data.utils.KeyUtil;
+import epermit.data.utils.MessageUtil;
 import lombok.SneakyThrows;
 
 public class CredentialServiceImpl implements CredentialService {
-    private final CredentialRepository repository;
+    private final PermitRepository repository;
     private final ModelMapper modelMapper;
-    private final MessageUtils messageUtils;
-    private final CredentialUtils credentialUtils;
-    private final KeyUtils keyUtils;
+    private final MessageUtil messageUtils;
+    private final PermitUtil credentialUtils;
+    private final KeyUtil keyUtils;
 
-    public CredentialServiceImpl(CredentialRepository repository, ModelMapper modelMapper,
-            CredentialUtils credentialUtils, MessageUtils messageUtils, KeyUtils keyUtils) {
+    public CredentialServiceImpl(PermitRepository repository, ModelMapper modelMapper,
+            PermitUtil credentialUtils, MessageUtil messageUtils, KeyUtil keyUtils) {
         this.repository = repository;
         this.modelMapper = modelMapper;
         this.messageUtils = messageUtils;

@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 @Repository
-public interface CredentialRepository extends JpaRepository<Permit, Long> {
+public interface PermitRepository extends JpaRepository<Permit, Long> {
     Optional<Permit> findOneBySerialNumber(String serialNumber);
 
     Optional<Permit> findFirstByOrderByPidDesc();
