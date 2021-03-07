@@ -1,16 +1,26 @@
 package epermit.data.utils;
 
+import java.security.MessageDigest;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.Base64;
 import java.util.Optional;
+import com.nimbusds.jose.util.Base64URL;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
+import epermit.commands.CreatePermitCommand;
 import epermit.common.MessageBase;
+import epermit.common.MessageCreatedEvent;
+import epermit.common.MessageType;
+import epermit.config.EPermitProperties;
 import epermit.data.entities.Authority;
 import epermit.data.entities.CreatedMessage;
 import epermit.data.repositories.AuthorityRepository;
 import epermit.data.repositories.CreatedMessageRepository;
+import epermit.messages.CreatePermitMessage;
 import lombok.SneakyThrows;
 
 public class MessageUtil {
@@ -19,18 +29,28 @@ public class MessageUtil {
     private final ApplicationEventPublisher eventPublisher;
     private final JwsUtil jwsUtil;
     private final CreatedMessageRepository createdMessageRepository;
+    private final EPermitProperties props;
 
 
     public MessageUtil(RestTemplate restTemplate, AuthorityRepository authorityRepository,
             ApplicationEventPublisher eventPublisher, JwsUtil jwsUtil,
-            CreatedMessageRepository createdMessageRepository) {
+            CreatedMessageRepository createdMessageRepository, EPermitProperties props) {
         this.restTemplate = restTemplate;
         this.authorityRepository = authorityRepository;
         this.jwsUtil = jwsUtil;
         this.eventPublisher = eventPublisher;
         this.createdMessageRepository = createdMessageRepository;
+        this.props = props;
     }
 
+    @SneakyThrows
+    public String getMessageId(String jws){
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] encodedhash = digest.digest(Base64.getUrlDecoder().decode(jws) );
+        String messageId = Base64.getUrlEncoder().encodeToString(encodedhash);
+        return messageId;
+    }
+    
     @SneakyThrows
     public boolean sendMesaage(String aud, String jwt) {
         HttpHeaders headers = new HttpHeaders();
@@ -41,44 +61,39 @@ public class MessageUtil {
         return true;
     }
 
-    public <T extends MessageBase> void publish(T message) {
-        CreatedMessage messageEntity = new CreatedMessage();
-        messageEntity.setAud(message.getAudience());
-        messageEntity.setMessage(jwsUtil.createJws(message));
-        createdMessageRepository.save(messageEntity);
-        eventPublisher.publishEvent(message);
+    public CreatePermitMessage getCreatePermitMessage(int pid, String serialNumber,
+            CreatePermitCommand cmd) {
+        CreatePermitMessage message = CreatePermitMessage.builder()
+                .companyName(cmd.getCompanyName()).permitId(pid).permitType(cmd.getPermitType())
+                .permitYear(cmd.getPermitYear()).plateNumber(cmd.getPlateNumber())
+                .claims(cmd.getClaims()).serialNumber(serialNumber).build();
+        setCommonClaims(message);
+        message.setMessageType(MessageType.CREATE_KEY);
+        return message;
     }
 
-    /*
-     * public CommandResult handleCreate(Map<String, Object> claims) { Optional<Credential>
-     * credResult =
-     * credentialRepository.findOneBySerialNumber(claims.get("serial_number").toString()); if
-     * (!credResult.isPresent()) { return CommandResult.fail("SERIAL_NUMBER_EXISTS",
-     * "The serial number exists"); } Credential cred = new Credential();
-     * cred.setCn(claims.get("cn").toString()); cred.setCreatedAt(OffsetDateTime.now());
-     * cred.setExp((long) claims.get("exp")); cred.setIat((long) claims.get("iat"));
-     * cred.setIss(claims.get("iss").toString()); cred.setPid((int) claims.get("pid"));
-     * cred.setPy((int) claims.get("py")); cred.setPt((int) claims.get("pt"));
-     * cred.setSerialNumber(claims.get("serial_number").toString());
-     * cred.setSub(claims.get("sub").toString()); cred.setClaims(claims.get("claims").toString());
-     * credentialRepository.save(cred); return CommandResult.success(); }
-     * 
-     * public CommandResult handleRevoke(Map<String, Object> claims) { Optional<Credential>
-     * credResult =
-     * credentialRepository.findOneBySerialNumber(claims.get("serial_number").toString()); if
-     * (!credResult.isPresent()) { return CommandResult.fail("PERMIT_NOT_FOUND",
-     * "The permit not found"); } Credential cred = credResult.get();
-     * credentialRepository.delete(cred); return CommandResult.success(); }
-     * 
-     * public CommandResult handleFeedback(Map<String, Object> claims) { Optional<IssuedCredential>
-     * credResult = issuedCredentialRepository
-     * .findOneBySerialNumber(claims.get("serial_number").toString()); if (!credResult.isPresent())
-     * { return CommandResult.fail("PERMIT_NOT_FOUND", "The permit not found"); } IssuedCredential
-     * cred = credResult.get(); cred.setUsed(true); cred.setUsedAt(OffsetDateTime.now());
-     * issuedCredentialRepository.save(cred); return CommandResult.success(); }
-     */
+    private <T extends MessageBase> void setCommonClaims(T message){
+        message.setIssuedAt(OffsetDateTime.now(ZoneOffset.UTC).toEpochSecond());
+        message.setIssuer(props.getIssuer().getCode());
+    }
 
+    public <T extends MessageBase> CreatedMessage getCreatedMessage(T message) {
+        CreatedMessage messageEntity = new CreatedMessage();
+        messageEntity.setIssuedFor(message.getIssuedFor());
+        messageEntity.setMessage(jwsUtil.createJws(message));
+        return messageEntity;
+    }
 
+    public <T extends MessageBase> void publish(T message) {
+        Authority authority = authorityRepository.findByCode(message.getIssuedFor()).get();
+        CreatedMessage messageEntity = getCreatedMessage(message);
+        createdMessageRepository.save(messageEntity);
+        MessageCreatedEvent event = new MessageCreatedEvent();
+        event.setAuthorityUri(authority.getUri());
+        event.setMessage(messageEntity.getMessage());
+        eventPublisher.publishEvent(message);
+    }
+ 
 }
 
 

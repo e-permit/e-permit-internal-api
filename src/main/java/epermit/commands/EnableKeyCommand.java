@@ -5,5 +5,5 @@ import lombok.Data;
 
 @Data
 public class EnableKeyCommand implements Command<CommandResult> {
-    
+    private Long keyId;
 }

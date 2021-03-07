@@ -1,5 +1,7 @@
 package epermit.data.commandhandlers;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import javax.transaction.Transactional;
@@ -13,12 +15,14 @@ import epermit.common.MessageType;
 import epermit.data.entities.ReceivedMessage;
 import epermit.data.repositories.ReceivedMessageRepository;
 import epermit.data.utils.JwsUtil;
+import epermit.data.utils.MessageUtil;
 import epermit.messages.CreateKeyMessage;
 import epermit.messages.CreatePermitMessage;
 import epermit.messages.CreateQuotaMessage;
 import epermit.messages.PermitUsedMessage;
 import epermit.messages.QuotaCreatedMessage;
 import epermit.messages.RevokePermitMessage;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -27,33 +31,36 @@ public class ReceiveMessageCommandHandler
     private final Pipeline pipeline;
     private final ReceivedMessageRepository repository;
     private final JwsUtil jwsUtil;
+    private final MessageUtil messageUtil;
 
     public ReceiveMessageCommandHandler(ReceivedMessageRepository repository, Pipeline pipeline,
-            JwsUtil jwsUtil) {
+            JwsUtil jwsUtil, MessageUtil messageUtil) {
         this.repository = repository;
         this.pipeline = pipeline;
         this.jwsUtil = jwsUtil;
+        this.messageUtil = messageUtil;
     }
 
     @Override
     @Transactional
+    @SneakyThrows
     public String handle(ReceiveMessageCommand cmd) {
-        String resultCode = "";
+        String resultCode;
         log.info("The message is recived");
-        MessageType messageType = jwsUtil.getClaim(cmd.getMessageJws(), "message_type"); 
-        JwsValidationResult validationResult = jwsUtil.validateJws(cmd.getMessageJws());   
-        if (validationResult.isValid()) {   
+        MessageType messageType = jwsUtil.getClaim(cmd.getMessageJws(), "message_type");
+        JwsValidationResult validationResult = jwsUtil.validateJws(cmd.getMessageJws());
+        if (validationResult.isValid()) {
             Command<String> m = getMessageCommand(cmd.getMessageJws(), messageType);
             resultCode = m.execute(pipeline);
         } else {
             resultCode = validationResult.getErrorCode();
         }
-        String messageId = jwsUtil.getClaim(cmd.getMessageJws(), "message_id");
+ 
         String issuer = jwsUtil.getClaim(cmd.getMessageJws(), "issuer");
         String audience = jwsUtil.getClaim(cmd.getMessageJws(), "audience");
         MessageResult result = new MessageResult();
         result.setResultCode(resultCode);
-        result.setMessageId(messageId);
+        result.setMessageId(messageUtil.getMessageId(cmd.getMessageJws()));
         result.setIssuer(audience);
         result.setAudience(issuer);
         result.setIssuedAt(OffsetDateTime.now(ZoneOffset.UTC).toEpochSecond());

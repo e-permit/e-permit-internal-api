@@ -9,8 +9,8 @@ public class MessageResult {
     private String audience;
 
     private Long issuedAt;
-    
-    private String resultCode;
 
     private String messageId;
+
+    private String resultCode;
 }

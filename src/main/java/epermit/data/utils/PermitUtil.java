@@ -36,7 +36,7 @@ public class PermitUtil {
         Optional<Authority> authority = authorityRepository.findByCode(aud);
         Optional<IssuedPermit> revokedCred = issuedCredentialRepository.findFirstByRevokedTrue();
         if (revokedCred.isPresent()) {
-            int nextPid = revokedCred.get().getPid();
+            int nextPid = revokedCred.get().getPermitId();
             issuedCredentialRepository.delete(revokedCred.get());
             return nextPid;
         }

@@ -106,7 +106,7 @@ public class AuthorityServiceImpl implements AuthorityService {
     public CommandResult createAuthorityQuota(String code, CreateAuthorityQuotaInput input) {
         Authority authority = authorityRepository.findByCode(code).get();
         VerifierQuota quota = modelMapper.map(input, VerifierQuota.class);
-        authority.addAuthorityQuota(quota);
+        authority.addVerifierQuota(quota);
         authorityRepository.save(authority);
         return CommandResult.success();
     }

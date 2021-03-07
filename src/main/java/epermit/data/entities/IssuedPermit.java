@@ -9,7 +9,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
-
+import epermit.common.PermitType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -27,32 +27,32 @@ public class IssuedPermit {
     @Column(name = "serial_number", nullable = false)
     private String serialNumber;
 
-    @Column(name = "qrcode", nullable = false, length=1000)
-    private String qrcode;
+    @Column(name = "qr_code", nullable = false, length=1000)
+    private String qrCode;
 
-    @Column(name = "aud", nullable = false)
-    private String aud;
+    @Column(name = "issued_for", nullable = false)
+    private String issuedFor;
 
-    @Column(name = "pid", nullable = false)
-    private int pid;
+    @Column(name = "permit_id", nullable = false)
+    private int permitId;
 
-    @Column(name = "pt", nullable = false)
-    private int pt;
+    @Column(name = "permit_type", nullable = false)
+    private PermitType permitType;
 
-    @Column(name = "py", nullable = false)
-    private int py;
+    @Column(name = "permit_year", nullable = false)
+    private int permitYear;
 
-    @Column(name = "iat", nullable = false)
-    private long iat;
+    @Column(name = "issued_at", nullable = false)
+    private String issuedAt;
 
-    @Column(name = "exp", nullable = false)
-    private long exp;
+    @Column(name = "expire_at", nullable = false)
+    private String expireAt;
 
-    @Column(name = "sub", nullable = false)
-    private String sub;
+    @Column(name = "plate_number", nullable = false)
+    private String plateNumber;
 
-    @Column(name = "cn", nullable = false)
-    private String cn;
+    @Column(name = "company_name", nullable = false)
+    private String companyName;
 
     @Column(name = "claims", nullable = false, length=1000)
     private String claims;

@@ -1,7 +1,6 @@
 package epermit.data.utils;
 
 import com.google.gson.Gson;
-import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSObject;

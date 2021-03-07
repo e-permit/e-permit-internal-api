@@ -1,12 +1,10 @@
 package epermit.data.commandhandlers;
 
 import javax.transaction.Transactional;
-import org.springframework.context.ApplicationEventPublisher;
 import an.awesome.pipelinr.Command;
 import epermit.commands.CreateKeyCommand;
 import epermit.common.CommandResult;
 import epermit.data.entities.Key;
-import epermit.data.repositories.CreatedMessageRepository;
 import epermit.data.repositories.KeyRepository;
 import epermit.data.utils.KeyUtil;
 import lombok.SneakyThrows;

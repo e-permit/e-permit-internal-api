@@ -22,8 +22,8 @@ public class CreatedMessage {
     @GeneratedValue
     private long id;
 
-    @Column(name = "aud", nullable = false)
-    private String aud;
+    @Column(name = "issued_for", nullable = false)
+    private String issuedFor;
 
     @Column(name = "message_type", nullable = false)
     @Enumerated(EnumType.STRING)

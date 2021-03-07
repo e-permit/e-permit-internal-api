@@ -5,5 +5,5 @@ import lombok.Data;
 
 @Data
 public class PermitUsedCommand implements Command<CommandResult> {
-    
+    private Long permitId;
 }

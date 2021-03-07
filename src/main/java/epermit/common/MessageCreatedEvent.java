@@ -4,5 +4,7 @@ import lombok.Data;
 
 @Data
 public class MessageCreatedEvent {
-    private Long messageId;
+    private String message;
+
+    private String authorityUri;
 }

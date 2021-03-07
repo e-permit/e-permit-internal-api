@@ -5,5 +5,5 @@ import lombok.Data;
 
 @Data
 public class RevokeQuotaCommand implements Command<CommandResult> {
-    
+    private Long quotaId;
 }

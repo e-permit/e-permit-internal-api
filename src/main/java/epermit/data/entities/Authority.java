@@ -55,7 +55,7 @@ public class Authority {
   private List<VerifierQuota> verifierQuotas = new ArrayList<>();
 
   @JsonIgnore
-  public void addAuthorityQuota(VerifierQuota verifierQuota) {
+  public void addVerifierQuota(VerifierQuota verifierQuota) {
     verifierQuotas.add(verifierQuota);
     verifierQuota.setAuthority(this);
   }

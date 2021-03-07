@@ -61,22 +61,10 @@ public class IssuedPermitController {
         return cmd.execute(pipeline);
     }
 
-    /*
-     * @PatchMapping("/{id}/send") public CommandResult send(Long id) { return
-     * credentialService.send(id); }
-     */
-
     @PatchMapping("/{id}/revoke")
     public CommandResult revoke(Long id) {
         RevokePermitCommand cmd = new RevokePermitCommand();
-        cmd.setId(id);
+        cmd.setPermitId(id);
         return cmd.execute(pipeline);
     }
-
-    // from verifier
-    /*
-     * @PatchMapping("/{id}/setused") public CommandResult setUsed(Long id) { return
-     * credentialService.setUsed(id, ""); }
-     */
-
 }

@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class RevokePermitCommand implements Command<CommandResult> {
-    private Long id;
+    private Long permitId;
 
     private String comment;
 }
