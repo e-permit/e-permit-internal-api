@@ -1,10 +1,14 @@
 package epermit.data.utils;
 
+import java.lang.reflect.Type;
 import java.security.MessageDigest;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Base64;
+import java.util.Map;
 import java.util.Optional;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.nimbusds.jose.util.Base64URL;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpEntity;
@@ -18,6 +22,7 @@ import epermit.common.MessageType;
 import epermit.config.EPermitProperties;
 import epermit.data.entities.Authority;
 import epermit.data.entities.CreatedMessage;
+import epermit.data.entities.IssuedPermit;
 import epermit.data.repositories.AuthorityRepository;
 import epermit.data.repositories.CreatedMessageRepository;
 import epermit.messages.CreatePermitMessage;
@@ -44,13 +49,13 @@ public class MessageUtil {
     }
 
     @SneakyThrows
-    public String getMessageId(String jws){
+    public String getMessageId(String jws) {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        byte[] encodedhash = digest.digest(Base64.getUrlDecoder().decode(jws) );
+        byte[] encodedhash = digest.digest(Base64.getUrlDecoder().decode(jws));
         String messageId = Base64.getUrlEncoder().encodeToString(encodedhash);
         return messageId;
     }
-    
+
     @SneakyThrows
     public boolean sendMesaage(String aud, String jwt) {
         HttpHeaders headers = new HttpHeaders();
@@ -61,20 +66,26 @@ public class MessageUtil {
         return true;
     }
 
-    public CreatePermitMessage getCreatePermitMessage(int pid, String serialNumber,
-            CreatePermitCommand cmd) {
-        CreatePermitMessage message = CreatePermitMessage.builder()
-                .companyName(cmd.getCompanyName()).permitId(pid).permitType(cmd.getPermitType())
-                .permitYear(cmd.getPermitYear()).plateNumber(cmd.getPlateNumber())
-                .claims(cmd.getClaims()).serialNumber(serialNumber).build();
-        setCommonClaims(message);
-        message.setMessageType(MessageType.CREATE_KEY);
+    public CreatePermitMessage getCreatePermitMessage(IssuedPermit permit) {
+        Gson gson = new Gson();
+        Type type = new TypeToken<Map<String, Object>>() {
+        }.getType();
+        CreatePermitMessage message =
+                CreatePermitMessage.builder().companyName(permit.getCompanyName())
+                        .permitId(permit.getPermitId()).permitType(permit.getPermitType())
+                        .permitYear(permit.getPermitYear()).plateNumber(permit.getPlateNumber())
+                        .claims(gson.fromJson(permit.getClaims(), type))
+                        .serialNumber(permit.getSerialNumber()).build();
+        setCommonClaims(message, permit.getIssuedFor(), MessageType.CREATE_PERMIT);
         return message;
     }
 
-    private <T extends MessageBase> void setCommonClaims(T message){
-        message.setIssuedAt(OffsetDateTime.now(ZoneOffset.UTC).toEpochSecond());
+    private <T extends MessageBase> void setCommonClaims(T message, String issuedFor,
+            MessageType messageType) {
+        message.setCreatedAt(OffsetDateTime.now(ZoneOffset.UTC).toEpochSecond());
         message.setIssuer(props.getIssuer().getCode());
+        message.setIssuedFor(issuedFor);
+        message.setMessageType(messageType);
     }
 
     public <T extends MessageBase> CreatedMessage getCreatedMessage(T message) {
@@ -93,7 +104,7 @@ public class MessageUtil {
         event.setMessage(messageEntity.getMessage());
         eventPublisher.publishEvent(message);
     }
- 
+
 }
 
 

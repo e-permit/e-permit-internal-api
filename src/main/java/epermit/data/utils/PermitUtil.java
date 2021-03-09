@@ -2,11 +2,14 @@ package epermit.data.utils;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.StringJoiner;
+import com.google.gson.Gson;
 import org.springframework.stereotype.Component;
+import epermit.commands.CreatePermitCommand;
 import epermit.common.PermitType;
 import epermit.config.EPermitProperties;
 import epermit.data.entities.Authority;
@@ -87,6 +90,27 @@ public class PermitUtil {
         return quotaResult.isPresent();
     }
 
+    public IssuedPermit getPermitFromCommand(CreatePermitCommand cmd, Integer pid) {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        Gson gson = new Gson();
+        String serialNumber =
+                getSerialNumber(cmd.getIssuedFor(), cmd.getPermitType(), cmd.getPermitYear(), pid);
+        String qrCode = createPermitQrCode(cmd.getIssuedFor(), cmd.getPlateNumber(),
+                cmd.getPermitType(), cmd.getPermitYear(), pid, cmd.getCompanyName());
+        IssuedPermit permit = new IssuedPermit();
+        permit.setIssuedFor(cmd.getIssuedFor());
+        permit.setClaims(gson.toJson(cmd.getClaims()));
+        permit.setQrCode(qrCode);
+        permit.setCompanyName(cmd.getCompanyName());
+        permit.setExpireAt(OffsetDateTime.now().plusYears(1).format(dtf));
+        permit.setIssuedAt(OffsetDateTime.now().format(dtf));
+        permit.setPermitId(pid);
+        permit.setPermitType(cmd.getPermitType());
+        permit.setPermitYear(cmd.getPermitYear());
+        permit.setPlateNumber(cmd.getPlateNumber());
+        permit.setSerialNumber(serialNumber);
+        return permit;
+    }
 
     /*
      * public Map<String, Object> getPermitClaims(CreateIssuedCredentialInput input, int pid) {
