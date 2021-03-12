@@ -90,7 +90,7 @@ public class PermitUtil {
         return quotaResult.isPresent();
     }
 
-    public IssuedPermit getPermitFromCommand(CreatePermitCommand cmd, Integer pid) {
+    public IssuedPermit convertCommandToPermit(CreatePermitCommand cmd, Integer pid) {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         Gson gson = new Gson();
         String serialNumber =

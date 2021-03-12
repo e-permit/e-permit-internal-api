@@ -3,6 +3,7 @@ package epermit.messages;
 import java.util.Map;
 import an.awesome.pipelinr.Command;
 import epermit.common.MessageBase;
+import epermit.common.MessageHandleResult;
 import epermit.common.PermitType;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,7 +11,7 @@ import lombok.Singular;
 
 @Getter
 @Builder(toBuilder = true)
-public class CreatePermitMessage extends MessageBase implements Command<String> {
+public class CreatePermitMessage extends MessageBase implements Command<MessageHandleResult> {
     private String serialNumber;
     private PermitType permitType;
     private int permitYear;

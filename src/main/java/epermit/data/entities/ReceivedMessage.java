@@ -21,6 +21,9 @@ public class ReceivedMessage {
     @GeneratedValue
     private long id;
 
+    @Column(name = "message_id", nullable = false)
+    private String messageId;
+
     @Column(name = "iss", nullable = false)
     private String iss;
 

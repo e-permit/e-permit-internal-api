@@ -7,6 +7,7 @@ import java.time.ZoneOffset;
 import java.util.Base64;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.nimbusds.jose.util.Base64URL;
@@ -23,6 +24,7 @@ import epermit.config.EPermitProperties;
 import epermit.data.entities.Authority;
 import epermit.data.entities.CreatedMessage;
 import epermit.data.entities.IssuedPermit;
+import epermit.data.entities.Permit;
 import epermit.data.repositories.AuthorityRepository;
 import epermit.data.repositories.CreatedMessageRepository;
 import epermit.messages.CreatePermitMessage;
@@ -49,14 +51,6 @@ public class MessageUtil {
     }
 
     @SneakyThrows
-    public String getMessageId(String jws) {
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        byte[] encodedhash = digest.digest(Base64.getUrlDecoder().decode(jws));
-        String messageId = Base64.getUrlEncoder().encodeToString(encodedhash);
-        return messageId;
-    }
-
-    @SneakyThrows
     public boolean sendMesaage(String aud, String jwt) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -66,7 +60,7 @@ public class MessageUtil {
         return true;
     }
 
-    public CreatePermitMessage getCreatePermitMessage(IssuedPermit permit) {
+    public CreatePermitMessage convertPermitToMessage(IssuedPermit permit) {
         Gson gson = new Gson();
         Type type = new TypeToken<Map<String, Object>>() {
         }.getType();
@@ -80,24 +74,18 @@ public class MessageUtil {
         return message;
     }
 
-    private <T extends MessageBase> void setCommonClaims(T message, String issuedFor,
-            MessageType messageType) {
-        message.setCreatedAt(OffsetDateTime.now(ZoneOffset.UTC).toEpochSecond());
-        message.setIssuer(props.getIssuer().getCode());
-        message.setIssuedFor(issuedFor);
-        message.setMessageType(messageType);
-    }
+    public Permit convertMessageToPermit(CreatePermitMessage m) {
+        Gson gson = new Gson();
+        Permit permit = new Permit();
+        permit.setClaims(gson.toJson(m.getClaims()));
+    
+        return permit;
+     }
 
-    public <T extends MessageBase> CreatedMessage getCreatedMessage(T message) {
-        CreatedMessage messageEntity = new CreatedMessage();
-        messageEntity.setIssuedFor(message.getIssuedFor());
-        messageEntity.setMessage(jwsUtil.createJws(message));
-        return messageEntity;
-    }
 
     public <T extends MessageBase> void publish(T message) {
         Authority authority = authorityRepository.findByCode(message.getIssuedFor()).get();
-        CreatedMessage messageEntity = getCreatedMessage(message);
+        CreatedMessage messageEntity = messageToEntity(message);
         createdMessageRepository.save(messageEntity);
         MessageCreatedEvent event = new MessageCreatedEvent();
         event.setAuthorityUri(authority.getUri());
@@ -105,6 +93,36 @@ public class MessageUtil {
         eventPublisher.publishEvent(message);
     }
 
+    private <T extends MessageBase> void setCommonClaims(T message, String issuedFor,
+            MessageType messageType) {
+        message.setCreatedAt(OffsetDateTime.now(ZoneOffset.UTC).toEpochSecond());
+        message.setIssuer(props.getIssuer().getCode());
+        message.setIssuedFor(issuedFor);
+        message.setMessageType(messageType);
+        message.setMessageId(UUID.randomUUID().toString());
+    }
+
+    private <T extends MessageBase> CreatedMessage messageToEntity(T message) {
+        CreatedMessage messageEntity = new CreatedMessage();
+        messageEntity.setIssuedFor(message.getIssuedFor());
+        messageEntity.setMessage(jwsUtil.createJws(message));
+        return messageEntity;
+    }
+
 }
 
 
+
+
+
+
+
+
+
+    /*@SneakyThrows
+    public String getMessageId(String jws) {
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] encodedhash = digest.digest(Base64.getUrlDecoder().decode(jws));
+        String messageId = Base64.getUrlEncoder().encodeToString(encodedhash);
+        return messageId;
+    }*/

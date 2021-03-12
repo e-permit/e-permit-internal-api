@@ -1,6 +1,5 @@
 package epermit.data.commandhandlers;
 
-import java.util.Optional;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import an.awesome.pipelinr.Command;
@@ -32,6 +31,7 @@ public class CreateQuotaCommandHandler
         quota.setEndNumber(command.getEndId());
         quota.setStartNumber(command.getStartId());
         quota.setYear(command.getYear());
+        quota.setActive(false);
         //quota.getCurrentNumber()
         authority.addIssuerQuota(quota);
         repository.save(authority);

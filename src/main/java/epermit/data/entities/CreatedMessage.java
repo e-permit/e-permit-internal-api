@@ -21,6 +21,9 @@ public class CreatedMessage {
     @Id
     @GeneratedValue
     private long id;
+    
+    @Column(name = "message_id", nullable = false)
+    private String messageId;
 
     @Column(name = "issued_for", nullable = false)
     private String issuedFor;

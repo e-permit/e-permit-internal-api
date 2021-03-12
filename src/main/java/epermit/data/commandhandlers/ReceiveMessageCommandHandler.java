@@ -1,7 +1,5 @@
 package epermit.data.commandhandlers;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import javax.transaction.Transactional;
@@ -10,6 +8,7 @@ import an.awesome.pipelinr.Command;
 import an.awesome.pipelinr.Pipeline;
 import epermit.commands.ReceiveMessageCommand;
 import epermit.common.JwsValidationResult;
+import epermit.common.MessageHandleResult;
 import epermit.common.MessageResult;
 import epermit.common.MessageType;
 import epermit.data.entities.ReceivedMessage;
@@ -50,17 +49,18 @@ public class ReceiveMessageCommandHandler
         MessageType messageType = jwsUtil.getClaim(cmd.getMessageJws(), "message_type");
         JwsValidationResult validationResult = jwsUtil.validateJws(cmd.getMessageJws());
         if (validationResult.isValid()) {
-            Command<String> m = getMessageCommand(cmd.getMessageJws(), messageType);
-            resultCode = m.execute(pipeline);
+            Command<MessageHandleResult> m = getMessageCommand(cmd.getMessageJws(), messageType);
+            resultCode = m.execute(pipeline).getResultCode();
         } else {
             resultCode = validationResult.getErrorCode();
         }
- 
+
         String issuer = jwsUtil.getClaim(cmd.getMessageJws(), "issuer");
-        String audience = jwsUtil.getClaim(cmd.getMessageJws(), "audience");
+        String audience = jwsUtil.getClaim(cmd.getMessageJws(), "issued_for");
+        String messageId = jwsUtil.getClaim(cmd.getMessageJws(), "message_id");
         MessageResult result = new MessageResult();
         result.setResultCode(resultCode);
-        result.setMessageId(messageUtil.getMessageId(cmd.getMessageJws()));
+        result.setMessageId(messageId);
         result.setIssuer(audience);
         result.setAudience(issuer);
         result.setIssuedAt(OffsetDateTime.now(ZoneOffset.UTC).toEpochSecond());
@@ -75,8 +75,8 @@ public class ReceiveMessageCommandHandler
         return resultJws;
     }
 
-    private Command<String> getMessageCommand(String jws, MessageType messageType) {
-        Command<String> m = null;
+    private Command<MessageHandleResult> getMessageCommand(String jws, MessageType messageType) {
+        Command<MessageHandleResult> m = null;
         Gson gson = new Gson();
         switch (messageType) {
             case CREATE_KEY:

@@ -33,9 +33,9 @@ public class CreatePermitCommandHandler
                 if (pid == null) {
 
                 }
-                IssuedPermit permit = permitUtil.getPermitFromCommand(cmd, pid);
+                IssuedPermit permit = permitUtil.convertCommandToPermit(cmd, pid);
                 repository.save(permit);
-                CreatePermitMessage message = messageUtil.getCreatePermitMessage(permit);
+                CreatePermitMessage message = messageUtil.convertPermitToMessage(permit);
                 messageUtil.publish(message);
                 CommandResult result = CommandResult.success();
                 return result;
